@@ -5,7 +5,7 @@ const describe = QUnit.module;
 const it = QUnit.test;
 const babel = require('babel-core');
 const Plugin = require('../src');
-const mapping = require('ember-modules-codemod/config/mapping');
+const mapping = require('ember-rfc176-data');
 
 function transform(source) {
   let result = babel.transform(source, {

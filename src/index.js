@@ -1,11 +1,11 @@
 'use strict';
 
-const mapping = require('ember-modules-codemod/config/mapping');
+const mapping = require('ember-rfc176-data');
 
 module.exports = function(babel) {
   const t = babel.types;
 
-  // Flips the codemod mapping into an 'import' indexed object, that exposes the
+  // Flips the ember-rfc176-data mapping into an 'import' indexed object, that exposes the
   // default import as well as named imports, e.g. import {foo} from 'bar'
   const reverseMapping = {};
   Object.keys(mapping).forEach(global => {
