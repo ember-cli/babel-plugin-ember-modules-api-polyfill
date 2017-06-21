@@ -1,6 +1,6 @@
 'use strict';
 
-const mapping = require('../config/mapping');
+const mapping = require('ember-modules-codemod/config/mapping');
 
 module.exports = function(babel) {
   const { types: t } = babel;
@@ -10,7 +10,8 @@ module.exports = function(babel) {
   const reverseMapping = {};
   Object.keys(mapping).forEach(global => {
     const imported = mapping[global];
-    let [importRoot, importName] = imported;
+    const importRoot = imported[0];
+    let importName = imported[1];
     if (!importName) {
       importName = 'default';
     }
@@ -23,10 +24,10 @@ module.exports = function(babel) {
   });
 
   return {
-    name: 'ast-transform', // not required
+    name: 'ember-modules-api-polyfill',
     visitor: {
       ImportDeclaration(path) {
-        let { node } = path;
+        let node = path.node;
         let replacements = [];
 
         // Ignore non @ember imports

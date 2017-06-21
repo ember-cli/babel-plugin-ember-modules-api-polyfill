@@ -5,7 +5,7 @@ const describe = QUnit.module;
 const it = QUnit.test;
 const babel = require('babel-core');
 const Plugin = require('../src');
-const mapping = require('../config/mapping');
+const mapping = require('ember-modules-codemod/config/mapping');
 
 function transform(source) {
   let result = babel.transform(source, {
@@ -28,7 +28,14 @@ function matches(source, expected) {
 // Ensure each of the config mappings is mapped correctly
 Object.keys(mapping).forEach(global => {
   const imported = mapping[global];
-  let [importRoot, importName] = imported;
+  const importRoot = imported[0];
+
+  // Only process @ember imports
+  if (importRoot.indexOf('@ember/') === -1) {
+    return;
+  }
+
+  let importName = imported[1];
   if (!importName) {
     importName = 'default';
   }
@@ -77,11 +84,22 @@ describe(`ember-modules-api-polyfill-default-as-alias`, () => {
   );
 });
 
-// Ensure mapping the default as an alias works
-// not sure how to handle exceptions in tests, help please :)
-// describe(`ember-modules-api-polyfill-default-as-alias`, () => {
-//   matches(
-//     `import { foo } from '@ember/component';`,
-//     `var foo = Ember.Component;`
-//   );
-// });
+// Ensure exception thrown for an invalid import
+describe(`ember-modules-api-polyfill-invalid-import`, () => {
+  it('throws an error for missing import', assert => {
+    assert.throws(() => {
+      let input = `import foo from '@ember/foobar';`;
+      transform(input);
+    }, '1 | import foo from \'@ember/foobar\';');
+  });
+});
+
+// Ensure exception thrown for an invalid named import
+describe(`ember-modules-api-polyfill-invalid-named-import`, () => {
+  it('throws an error for missing named import', assert => {
+    assert.throws(() => {
+      let input = `import { foo } from '@ember/component';`;
+      transform(input);
+    }, '1 | import { foo } from \'@ember/foobar\';');
+  });
+});
