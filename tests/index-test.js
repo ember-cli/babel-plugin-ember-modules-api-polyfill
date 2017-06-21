@@ -3,10 +3,9 @@
 
 const describe = QUnit.module;
 const it = QUnit.test;
-
 const babel = require('babel-core');
-
 const Plugin = require('../src');
+const mapping = require('../config/mapping');
 
 function transform(source) {
   let result = babel.transform(source, {
@@ -26,9 +25,63 @@ function matches(source, expected) {
   });
 }
 
-describe('ember-modules-api-polyfill', () => {
+// Ensure each of the config mappings is mapped correctly
+Object.keys(mapping).forEach(global => {
+  const imported = mapping[global];
+  let [importRoot, importName] = imported;
+  if (!importName) {
+    importName = 'default';
+  }
+  const varName = importName === 'default' ? 'defaultModule' : importName;
+  const localName = varName === 'defaultModule' ? varName : `{ ${varName} }`;
+
+  describe(`ember-modules-api-polyfill-${importRoot}-with-${importName}`, () => {
+    matches(
+      `import ${localName} from '${importRoot}';`,
+      `var ${varName} = Ember.${global};`
+    );
+  });
+});
+
+// Ensure mapping multiple imports makes multiple variables
+describe(`ember-modules-api-polyfill-import-multiple`, () => {
   matches(
-    `import Component from '@ember/component';`,
-    `var Component = Ember.Component;`
+    `import { empty, notEmpty } from '@ember/object/computed';`,
+    `var empty = Ember.computed.empty;
+var notEmpty = Ember.computed.notEmpty;`
   );
 });
+
+// Ensure mapping a named aliased import
+describe(`ember-modules-api-polyfill-named-as-alias`, () => {
+  matches(
+    `import { empty as isEmpty } from '@ember/object/computed';`,
+    `var isEmpty = Ember.computed.empty;`
+  );
+});
+
+// Ensure mapping a named and aliased import makes multiple named variables
+describe(`ember-modules-api-polyfill-import-named-multiple`, () => {
+  matches(
+    `import { empty, notEmpty as foo } from '@ember/object/computed';`,
+    `var empty = Ember.computed.empty;
+var foo = Ember.computed.notEmpty;`
+  );
+});
+
+// Ensure mapping the default as an alias works
+describe(`ember-modules-api-polyfill-default-as-alias`, () => {
+  matches(
+    `import { default as foo } from '@ember/component';`,
+    `var foo = Ember.Component;`
+  );
+});
+
+// Ensure mapping the default as an alias works
+// not sure how to handle exceptions in tests, help please :)
+// describe(`ember-modules-api-polyfill-default-as-alias`, () => {
+//   matches(
+//     `import { foo } from '@ember/component';`,
+//     `var foo = Ember.Component;`
+//   );
+// });
