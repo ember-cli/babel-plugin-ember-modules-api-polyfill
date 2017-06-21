@@ -27,4 +27,8 @@ function matches(source, expected) {
 }
 
 describe('ember-modules-api-polyfill', () => {
+  matches(
+    `import Component from '@ember/component';`,
+    `var Component = Ember.Component;`
+  );
 });
