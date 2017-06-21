@@ -18,6 +18,17 @@
     "qunitjs": "^2.3.3"
   },
   "dependencies": {
-      "ember-modules-codemod": "^0.1.5"
-  }
+    "ember-modules-codemod": "^0.1.5"
+  },
+  "directories": {
+    "test": "tests"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/ember-cli/babel-plugin-ember-modules-api-polyfill.git"
+  },
+  "bugs": {
+    "url": "https://github.com/ember-cli/babel-plugin-ember-modules-api-polyfill/issues"
+  },
+  "homepage": "https://github.com/ember-cli/babel-plugin-ember-modules-api-polyfill#readme"
 }
