@@ -31,7 +31,7 @@ Object.keys(mapping).forEach(global => {
   const importRoot = imported[0];
 
   // Only process @ember imports
-  if (importRoot.indexOf('@ember/') === -1) {
+  if (!importRoot.startsWith('@ember/')) {
     return;
   }
 
