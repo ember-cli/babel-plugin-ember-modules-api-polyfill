@@ -31,7 +31,7 @@ module.exports = function(babel) {
         let replacements = [];
 
         // Ignore non @ember imports
-        if (node.source.value.indexOf('@ember/') === -1) {
+        if (importRoot.startsWith('@ember/')) {
           return;
         }
 
