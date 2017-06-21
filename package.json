@@ -17,5 +17,7 @@
     "qunit-eslint": "^1.0.0",
     "qunitjs": "^2.3.3"
   },
-  "dependencies": {}
+  "dependencies": {
+      "ember-modules-codemod": "^0.1.5"
+  }
 }
