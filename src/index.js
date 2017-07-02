@@ -1,5 +1,6 @@
 'use strict';
 
+const path = require('path');
 const mapping = require('ember-rfc176-data');
 
 module.exports = function(babel) {
@@ -91,3 +92,7 @@ module.exports = function(babel) {
     },
   };
 };
+
+// Provide the path to the package's base directory for caching with broccoli
+// Ref: https://github.com/babel/broccoli-babel-transpiler#caching
+module.exports.baseDir = () => path.resolve(__dirname, '..');
