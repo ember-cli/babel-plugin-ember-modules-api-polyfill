@@ -86,23 +86,3 @@ describe(`ember-modules-api-polyfill-default-as-alias`, () => {
     `var foo = Ember.Component;`
   );
 });
-
-// Ensure exception thrown for an invalid import
-describe(`ember-modules-api-polyfill-invalid-import`, () => {
-  it('throws an error for missing import', assert => {
-    assert.throws(() => {
-      let input = `import foo from '@ember/foobar';`;
-      transform(input);
-    }, '1 | import foo from \'@ember/foobar\';');
-  });
-});
-
-// Ensure exception thrown for an invalid named import
-describe(`ember-modules-api-polyfill-invalid-named-import`, () => {
-  it('throws an error for missing named import', assert => {
-    assert.throws(() => {
-      let input = `import { foo } from '@ember/component';`;
-      transform(input);
-    }, '1 | import { foo } from \'@ember/foobar\';');
-  });
-});
