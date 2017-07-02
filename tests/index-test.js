@@ -30,11 +30,6 @@ Object.keys(mapping).forEach(global => {
   const imported = mapping[global];
   const importRoot = imported[0];
 
-  // Only process @ember imports
-  if (!importRoot.startsWith('@ember/')) {
-    return;
-  }
-
   let importName = imported[1];
   if (!importName) {
     importName = 'default';
@@ -56,6 +51,14 @@ describe(`ember-modules-api-polyfill-import-multiple`, () => {
     `import { empty, notEmpty } from '@ember/object/computed';`,
     `var empty = Ember.computed.empty;
 var notEmpty = Ember.computed.notEmpty;`
+  );
+});
+
+// Ensure jQuery and RSVP imports work
+describe(`ember-modules-api-polyfill-named-as-alias`, () => {
+  matches(
+    `import jQuery from 'jquery'; import RSVP from 'rsvp';`,
+    `var jQuery = Ember.$;\nvar RSVP = Ember.RSVP;`
   );
 });
 
