@@ -30,18 +30,14 @@ module.exports = function(babel) {
         let node = path.node;
         let replacements = [];
 
-        // Ignore non @ember imports
-        if (!node.source.value.startsWith('@ember/')) {
-          return;
-        }
-
+        let importPath = node.source.value;
         // Ensure this is a valid module
-        if (!reverseMapping[node.source.value]) {
-          throw path.buildCodeFrameError(`${node.source.value} is not a valid import`);
+        if (!reverseMapping[importPath]) {
+          throw path.buildCodeFrameError(`${importPath} is not a valid import`);
         }
 
         // This is the mapping to use for the import statement
-        const mapping = reverseMapping[node.source.value];
+        const mapping = reverseMapping[importPath];
 
         // Iterate all the specifiers and attempt to locate their mapping
         node.specifiers.forEach(specifier => {
@@ -74,7 +70,7 @@ module.exports = function(babel) {
 
           // Ensure the module being imported exists
           if (!global) {
-            throw path.buildCodeFrameError(`${node.source.value} does not have a ${importName} import`);
+            throw path.buildCodeFrameError(`${importPath} does not have a ${importName} import`);
           }
 
           // Repalce the node with a new `var name = Ember.something`
