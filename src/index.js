@@ -32,9 +32,10 @@ module.exports = function(babel) {
         let replacements = [];
 
         let importPath = node.source.value;
-        // Ensure this is a valid module
         if (!reverseMapping[importPath]) {
-          throw path.buildCodeFrameError(`${importPath} is not a valid import`);
+          // not a module provided by emberjs/rfcs#176
+          // so we have nothing to do here
+          return;
         }
 
         // This is the mapping to use for the import statement
