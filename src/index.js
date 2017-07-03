@@ -27,12 +27,13 @@ module.exports = function(babel) {
   return {
     name: 'ember-modules-api-polyfill',
     visitor: {
-      ImportDeclaration(path) {
+      ImportDeclaration(path, state) {
+        let blacklist = (state.opts && state.opts.blacklist) || [];
         let node = path.node;
         let replacements = [];
 
         let importPath = node.source.value;
-        if (!reverseMapping[importPath]) {
+        if (!reverseMapping[importPath] || blacklist.indexOf(importPath) > -1) {
           // not a module provided by emberjs/rfcs#176
           // so we have nothing to do here
           return;

@@ -7,11 +7,12 @@ const babel = require('babel-core');
 const Plugin = require('../src');
 const mapping = require('ember-rfc176-data');
 
-function transform(source) {
+function transform(source, _plugins) {
+  let plugins = _plugins || [
+    [Plugin],
+  ];
   let result = babel.transform(source, {
-    plugins: [
-      [Plugin],
-    ],
+    plugins,
   });
 
   return result.code;
@@ -85,4 +86,15 @@ describe(`ember-modules-api-polyfill-default-as-alias`, () => {
     `import { default as foo } from '@ember/component';`,
     `var foo = Ember.Component;`
   );
+});
+
+describe('options', () => {
+  it(`allows blacklisting import paths`, assert => {
+    let input = `import { assert } from '@ember/debug';`;
+    let actual = transform(input, [
+      [Plugin, { blacklist: ['@ember/debug'] }],
+    ]);
+
+    assert.equal(actual, input);
+  });
 });
