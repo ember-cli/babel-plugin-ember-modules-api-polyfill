@@ -3,6 +3,16 @@
 const path = require('path');
 const mapping = require('ember-rfc176-data');
 
+function isBlacklisted(blacklist, importPath, exportName) {
+  if (Array.isArray(blacklist)) {
+    return blacklist.indexOf(importPath) > -1;
+  } else {
+    let blacklistedExports = blacklist[importPath];
+
+    return blacklistedExports.indexOf(exportName) > -1;
+  }
+}
+
 module.exports = function(babel) {
   const t = babel.types;
 
@@ -31,9 +41,10 @@ module.exports = function(babel) {
         let blacklist = (state.opts && state.opts.blacklist) || [];
         let node = path.node;
         let replacements = [];
+        let removals = [];
 
         let importPath = node.source.value;
-        if (!reverseMapping[importPath] || blacklist.indexOf(importPath) > -1) {
+        if (!reverseMapping[importPath]) {
           // not a module provided by emberjs/rfcs#176
           // so we have nothing to do here
           return;
@@ -43,7 +54,8 @@ module.exports = function(babel) {
         const mapping = reverseMapping[importPath];
 
         // Iterate all the specifiers and attempt to locate their mapping
-        node.specifiers.forEach(specifier => {
+        path.get('specifiers').forEach(specifierPath => {
+          let specifier = specifierPath.node;
           let importName;
 
           // imported is the name of the module being imported, e.g. import foo from bar
@@ -68,6 +80,10 @@ module.exports = function(babel) {
             importName = imported.name;
           }
 
+          if (isBlacklisted(blacklist, importPath, importName)) {
+            return;
+          }
+
           // Extract the global mapping
           const global = mapping[importName];
 
@@ -75,6 +91,8 @@ module.exports = function(babel) {
           if (!global) {
             throw path.buildCodeFrameError(`${importPath} does not have a ${importName} import`);
           }
+
+          removals.push(specifierPath);
 
           // Repalce the node with a new `var name = Ember.something`
           replacements.push(
@@ -87,8 +105,11 @@ module.exports = function(babel) {
           );
         });
 
-        if (replacements.length > 0) {
+        if (removals.length === node.specifiers.length) {
           path.replaceWithMultiple(replacements);
+        } else if (replacements.length > 0) {
+          removals.forEach(specifierPath => specifierPath.remove());
+          path.insertAfter(replacements);
         }
       },
     },
