@@ -99,7 +99,6 @@ describe(`unknown imports from known module`, () => {
       ]);
     }, /@ember\/object\/computed does not have a derp import/);
   });
-
 });
 
 describe('options', () => {
@@ -119,5 +118,14 @@ describe('options', () => {
     ]);
 
     assert.equal(actual, `import { assert } from '@ember/debug';\nvar inspect = Ember.inspect;`);
+  });
+
+  it('does not error when a blacklist is not present', assert => {
+    let input = `import { assert, inspect } from '@ember/debug';`;
+    let actual = transform(input, [
+      [Plugin, { blacklist: { } }],
+    ]);
+
+    assert.equal(actual, `var assert = Ember.assert;\nvar inspect = Ember.inspect;`);
   });
 });
