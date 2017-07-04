@@ -9,7 +9,7 @@ function isBlacklisted(blacklist, importPath, exportName) {
   } else {
     let blacklistedExports = blacklist[importPath];
 
-    return blacklistedExports.indexOf(exportName) > -1;
+    return blacklistedExports && blacklistedExports.indexOf(exportName) > -1;
   }
 }
 
