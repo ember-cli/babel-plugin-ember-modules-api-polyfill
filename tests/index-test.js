@@ -88,6 +88,20 @@ describe(`ember-modules-api-polyfill-default-as-alias`, () => {
   );
 });
 
+// Ensure unknown exports are not removed
+describe(`unknown imports from known module`, () => {
+  it(`allows blacklisting import paths`, assert => {
+    let input = `import { derp } from '@ember/object/computed';`;
+
+    assert.throws(() => {
+      transform(input, [
+        [Plugin],
+      ]);
+    }, /@ember\/object\/computed does not have a derp import/);
+  });
+
+});
+
 describe('options', () => {
   it(`allows blacklisting import paths`, assert => {
     let input = `import { assert } from '@ember/debug';`;
@@ -96,5 +110,14 @@ describe('options', () => {
     ]);
 
     assert.equal(actual, input);
+  });
+
+  it(`allows blacklisting specific named imports`, assert => {
+    let input = `import { assert, inspect } from '@ember/debug';`;
+    let actual = transform(input, [
+      [Plugin, { blacklist: { '@ember/debug': ['assert', 'warn', 'deprecate'] } }],
+    ]);
+
+    assert.equal(actual, `import { assert } from '@ember/debug';\nvar inspect = Ember.inspect;`);
   });
 });
