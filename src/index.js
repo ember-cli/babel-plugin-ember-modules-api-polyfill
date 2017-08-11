@@ -39,6 +39,7 @@ module.exports = function(babel) {
     visitor: {
       ImportDeclaration(path, state) {
         let blacklist = (state.opts && state.opts.blacklist) || [];
+        let polyfillEmberString = state.opts.polyfillEmberString || true;
         let node = path.node;
         let replacements = [];
         let removals = [];
@@ -47,6 +48,12 @@ module.exports = function(babel) {
         if (!reverseMapping[importPath]) {
           // not a module provided by emberjs/rfcs#176
           // so we have nothing to do here
+          return;
+        }
+
+        if (!polyfillEmberString && importPath === '@ember/string') {
+          // `@ember/string` is present in the project
+          // so imports should not be transformed
           return;
         }
 
