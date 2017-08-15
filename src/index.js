@@ -130,7 +130,7 @@ module.exports = function(babel) {
           });
         }
 
-        if (removals.length === node.specifiers.length) {
+        if (removals.length > 0 && removals.length === node.specifiers.length) {
           path.replaceWithMultiple(replacements);
         } else if (replacements.length > 0) {
           removals.forEach(specifierPath => specifierPath.remove());
