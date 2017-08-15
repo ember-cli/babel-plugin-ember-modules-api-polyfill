@@ -39,7 +39,7 @@ module.exports = function(babel) {
     visitor: {
       ImportDeclaration(path, state) {
         let blacklist = (state.opts && state.opts.blacklist) || [];
-        let polyfillEmberString = state.opts.polyfillEmberString || true;
+        let polyfillEmberString = state.opts.polyfillEmberString === undefined ? true : state.opts.polyfillEmberString
         let node = path.node;
         let replacements = [];
         let removals = [];
