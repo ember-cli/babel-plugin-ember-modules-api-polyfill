@@ -129,3 +129,19 @@ describe('options', () => {
     assert.equal(actual, `var assert = Ember.assert;\nvar inspect = Ember.inspect;`);
   });
 });
+
+describe(`import from 'ember'`, () => {
+  matches(
+    `import Ember from 'ember';`,
+    ``
+  );
+  matches(
+    `import Em from 'ember';`,
+    `var Em = Ember;`
+  );
+  matches(
+    `import Asdf from 'ember';`,
+    `var Asdf = Ember;`
+  );
+});
+

@@ -42,68 +42,93 @@ module.exports = function(babel) {
         let node = path.node;
         let replacements = [];
         let removals = [];
-
+        let specifiers = path.get('specifiers');
         let importPath = node.source.value;
-        if (!reverseMapping[importPath]) {
-          // not a module provided by emberjs/rfcs#176
-          // so we have nothing to do here
-          return;
+
+        if (importPath === 'ember') {
+          // For `import Ember from 'ember'`, we can just remove the import
+          // and change `Ember` usage to to global Ember object.
+          let specifierPath = specifiers.find(specifierPath => {
+            if (specifierPath.isImportDefaultSpecifier()) {
+              return true;
+            }
+            // TODO: Use the nice Babel way to throw
+            throw new Error(`Unexpected non-default import from 'ember'`);
+          });
+
+          let local = specifierPath.node.local;
+          if (local.name !== 'Ember') {
+            // Repalce the node with a new `var name = Ember`
+            replacements.push(
+              t.variableDeclaration('var', [
+                t.variableDeclarator(
+                  local,
+                  t.identifier('Ember')
+                ),
+              ])
+            );
+          }
+          removals.push(specifierPath);
         }
 
         // This is the mapping to use for the import statement
         const mapping = reverseMapping[importPath];
 
-        // Iterate all the specifiers and attempt to locate their mapping
-        path.get('specifiers').forEach(specifierPath => {
-          let specifier = specifierPath.node;
-          let importName;
+        // Only walk specifiers if this is a module we have a mapping for
+        if (mapping) {
 
-          // imported is the name of the module being imported, e.g. import foo from bar
-          const imported = specifier.imported;
+          // Iterate all the specifiers and attempt to locate their mapping
+          specifiers.forEach(specifierPath => {
+            let specifier = specifierPath.node;
+            let importName;
 
-          // local is the name of the module in the current scope, this is usually the same
-          // as the imported value, unless the module is aliased
-          const local = specifier.local;
+            // imported is the name of the module being imported, e.g. import foo from bar
+            const imported = specifier.imported;
 
-          // We only care about these 2 specifiers
-          if (
-            specifier.type !== 'ImportDefaultSpecifier' &&
-            specifier.type !== 'ImportSpecifier'
-          ) {
-            return;
-          }
+            // local is the name of the module in the current scope, this is usually the same
+            // as the imported value, unless the module is aliased
+            const local = specifier.local;
 
-          // Determine the import name, either default or named
-          if (specifier.type === 'ImportDefaultSpecifier') {
-            importName = 'default';
-          } else {
-            importName = imported.name;
-          }
+            // We only care about these 2 specifiers
+            if (
+              specifier.type !== 'ImportDefaultSpecifier' &&
+              specifier.type !== 'ImportSpecifier'
+            ) {
+              return;
+            }
 
-          if (isBlacklisted(blacklist, importPath, importName)) {
-            return;
-          }
+            // Determine the import name, either default or named
+            if (specifier.type === 'ImportDefaultSpecifier') {
+              importName = 'default';
+            } else {
+              importName = imported.name;
+            }
 
-          // Extract the global mapping
-          const global = mapping[importName];
+            if (isBlacklisted(blacklist, importPath, importName)) {
+              return;
+            }
 
-          // Ensure the module being imported exists
-          if (!global) {
-            throw path.buildCodeFrameError(`${importPath} does not have a ${importName} import`);
-          }
+            // Extract the global mapping
+            const global = mapping[importName];
 
-          removals.push(specifierPath);
+            // Ensure the module being imported exists
+            if (!global) {
+              throw path.buildCodeFrameError(`${importPath} does not have a ${importName} import`);
+            }
 
-          // Repalce the node with a new `var name = Ember.something`
-          replacements.push(
-            t.variableDeclaration('var', [
-              t.variableDeclarator(
-                local,
-                t.memberExpression(t.identifier('Ember'), t.identifier(global))
-              ),
-            ])
-          );
-        });
+            removals.push(specifierPath);
+
+            // Repalce the node with a new `var name = Ember.something`
+            replacements.push(
+              t.variableDeclaration('var', [
+                t.variableDeclarator(
+                  local,
+                  t.memberExpression(t.identifier('Ember'), t.identifier(global))
+                ),
+              ])
+            );
+          });
+        }
 
         if (removals.length === node.specifiers.length) {
           path.replaceWithMultiple(replacements);
