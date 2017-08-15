@@ -143,5 +143,9 @@ describe(`import from 'ember'`, () => {
     `import Asdf from 'ember';`,
     `var Asdf = Ember;`
   );
+  matches(
+    `import './foo';`,
+    `import './foo';`
+  );
 });
 
