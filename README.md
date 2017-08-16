@@ -21,8 +21,8 @@ const inject = Ember.inject.service
 
 ## Why
 
-This plugin provides an API polyfill to allow ember addon authors to adopt the new 
-[Javscript modules API](https://github.com/emberjs/rfcs/blob/master/text/0176-javascript-module-api.md) whilst still maintaining backwards 
+This plugin provides an API polyfill to allow ember addon authors to adopt the new
+[JavaScript modules API](https://github.com/emberjs/rfcs/blob/master/text/0176-javascript-module-api.md) whilst still maintaining backwards 
 compatibility with older versions of Ember that do not support the new modules API.
 
 The intention of this Babel plugin is to also allow for a transition period and allow applications to exist in a mixed state whilst transitioning 
