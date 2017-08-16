@@ -102,30 +102,52 @@ describe(`unknown imports from known module`, () => {
 });
 
 describe('options', () => {
-  it(`allows blacklisting import paths`, assert => {
-    let input = `import { assert } from '@ember/debug';`;
-    let actual = transform(input, [
-      [Plugin, { blacklist: ['@ember/debug'] }],
-    ]);
+  describe('blacklist', () => {
+    it(`allows blacklisting import paths`, assert => {
+      let input = `import { assert } from '@ember/debug';`;
+      let actual = transform(input, [
+        [Plugin, { blacklist: ['@ember/debug'] }],
+      ]);
 
-    assert.equal(actual, input);
+      assert.equal(actual, input);
+    });
+
+    it(`allows blacklisting specific named imports`, assert => {
+      let input = `import { assert, inspect } from '@ember/debug';`;
+      let actual = transform(input, [
+        [Plugin, { blacklist: { '@ember/debug': ['assert', 'warn', 'deprecate'] } }],
+      ]);
+
+      assert.equal(actual, `import { assert } from '@ember/debug';\nvar inspect = Ember.inspect;`);
+    });
+
+    it('does not error when a blacklist is not present', assert => {
+      let input = `import { assert, inspect } from '@ember/debug';`;
+      let actual = transform(input, [
+        [Plugin, { blacklist: { } }],
+      ]);
+
+      assert.equal(actual, `var assert = Ember.assert;\nvar inspect = Ember.inspect;`);
+    });
   });
 
-  it(`allows blacklisting specific named imports`, assert => {
-    let input = `import { assert, inspect } from '@ember/debug';`;
-    let actual = transform(input, [
-      [Plugin, { blacklist: { '@ember/debug': ['assert', 'warn', 'deprecate'] } }],
-    ]);
+  describe('polyfillEmberString', () => {
+    it('converts `@ember/string` by default', assert => {
+      let input = `import { dasherize } from '@ember/string';`;
+      let actual = transform(input, [
+        [Plugin],
+      ]);
 
-    assert.equal(actual, `import { assert } from '@ember/debug';\nvar inspect = Ember.inspect;`);
-  });
+      assert.equal(actual, `var dasherize = Ember.String.dasherize;`);
+    });
 
-  it('does not error when a blacklist is not present', assert => {
-    let input = `import { assert, inspect } from '@ember/debug';`;
-    let actual = transform(input, [
-      [Plugin, { blacklist: { } }],
-    ]);
+    it('allows not polyfilling `@ember/string`', assert => {
+      let input = `import { dasherize } from '@ember/string';`;
+      let actual = transform(input, [
+        [Plugin, { polyfillEmberString: false }],
+      ]);
 
-    assert.equal(actual, `var assert = Ember.assert;\nvar inspect = Ember.inspect;`);
+      assert.equal(actual, input);
+    });
   });
 });
