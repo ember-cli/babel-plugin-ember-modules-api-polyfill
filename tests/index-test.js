@@ -130,26 +130,6 @@ describe('options', () => {
       assert.equal(actual, `var assert = Ember.assert;\nvar inspect = Ember.inspect;`);
     });
   });
-
-  describe('polyfillEmberString', () => {
-    it('converts `@ember/string` by default', assert => {
-      let input = `import { dasherize } from '@ember/string';`;
-      let actual = transform(input, [
-        [Plugin],
-      ]);
-
-      assert.equal(actual, `var dasherize = Ember.String.dasherize;`);
-    });
-
-    it('allows not polyfilling `@ember/string`', assert => {
-      let input = `import { dasherize } from '@ember/string';`;
-      let actual = transform(input, [
-        [Plugin, { polyfillEmberString: false }],
-      ]);
-
-      assert.equal(actual, input);
-    });
-  });
 });
 
 describe(`import from 'ember'`, () => {
