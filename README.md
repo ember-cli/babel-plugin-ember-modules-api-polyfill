@@ -2,7 +2,7 @@
 
 [![Greenkeeper badge](https://badges.greenkeeper.io/ember-cli/babel-plugin-ember-modules-api-polyfill.svg)](https://greenkeeper.io/)
 
-> This plugin transforms [Javscript modules API](https://github.com/emberjs/rfcs/blob/master/text/0176-javascript-module-api.md) import statements
+> This plugin transforms [JavaScript modules API](https://github.com/emberjs/rfcs/blob/master/text/0176-javascript-module-api.md) import statements
 > back to the legacy "global" ember object syntax
 
 ## Example
