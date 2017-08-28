@@ -456,9 +456,9 @@ ecc-jsbn@~0.1.1:
   dependencies:
     jsbn "~0.1.0"
 
-ember-rfc176-data@^0.2.0:
-  version "0.2.2"
-  resolved "https://registry.yarnpkg.com/ember-rfc176-data/-/ember-rfc176-data-0.2.2.tgz#cbe0896cd7855d6cc58d809d5616ea0d523b009e"
+ember-rfc176-data@^0.2.7:
+  version "0.2.7"
+  resolved "https://registry.yarnpkg.com/ember-rfc176-data/-/ember-rfc176-data-0.2.7.tgz#bd355bc9b473e08096b518784170a23388bc973b"
 
 ensure-posix-path@^1.0.0:
   version "1.0.2"
