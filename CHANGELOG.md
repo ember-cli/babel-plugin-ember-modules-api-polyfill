@@ -9,6 +9,7 @@
 * [#23](https://github.com/ember-cli/babel-plugin-ember-modules-api-polyfill/pull/23) Fix typo. ([@thomascchen](https://github.com/thomascchen))
 
 #### :house: Internal
+* [#26](https://github.com/ember-cli/babel-plugin-ember-modules-api-polyfill/pull/26) Add CHANGELOG file. ([@Turbo87](https://github.com/Turbo87))
 * [#25](https://github.com/ember-cli/babel-plugin-ember-modules-api-polyfill/pull/25) CI: Publish tags automatically on npm. ([@Turbo87](https://github.com/Turbo87))
 * [#24](https://github.com/ember-cli/babel-plugin-ember-modules-api-polyfill/pull/24) Update yarn.lock. ([@john-griffin](https://github.com/john-griffin))
 
