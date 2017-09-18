@@ -27,11 +27,10 @@ function matches(source, expected) {
 }
 
 // Ensure each of the config mappings is mapped correctly
-Object.keys(mapping).forEach(global => {
-  const imported = mapping[global];
-  const importRoot = imported[0];
+mapping.forEach(exportDefinition => {
+  const importRoot = exportDefinition.module;
 
-  let importName = imported[1];
+  let importName = exportDefinition.export;
   if (!importName) {
     importName = 'default';
   }
@@ -41,7 +40,7 @@ Object.keys(mapping).forEach(global => {
   describe(`ember-modules-api-polyfill-${importRoot}-with-${importName}`, () => {
     matches(
       `import ${localName} from '${importRoot}';`,
-      `var ${varName} = Ember.${global};`
+      `var ${varName} = ${exportDefinition.global};`
     );
   });
 });
