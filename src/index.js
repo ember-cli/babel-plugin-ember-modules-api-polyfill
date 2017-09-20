@@ -13,6 +13,10 @@ function isBlacklisted(blacklist, importPath, exportName) {
   }
 }
 
+function notifyDeprecation(msg) {
+  console.warn(msg);
+}
+
 module.exports = function(babel) {
   const t = babel.types;
 
@@ -73,6 +77,10 @@ module.exports = function(babel) {
 
         // Only walk specifiers if this is a module we have a mapping for
         if (mapping) {
+
+          if (mapping.deprecated) {
+            notifyDeprecation(`Module ${importPath} is deprecated.`);
+          }
 
           // Iterate all the specifiers and attempt to locate their mapping
           specifiers.forEach(specifierPath => {
