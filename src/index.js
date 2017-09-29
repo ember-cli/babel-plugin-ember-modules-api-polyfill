@@ -17,7 +17,8 @@ function notifyDeprecation(msg, notifier) {
   notifier.warn(msg);
 }
 
-module.exports = function(babel, notifier = console) {
+module.exports = function(babel, possibleNotifier) {
+  let notifier = possibleNotifier || console;
   const t = babel.types;
 
   // Flips the ember-rfc176-data mapping into an 'import' indexed object, that exposes the
