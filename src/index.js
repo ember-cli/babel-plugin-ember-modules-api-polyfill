@@ -15,7 +15,6 @@ function isBlacklisted(blacklist, importPath, exportName) {
 
 module.exports = function(babel) {
   const t = babel.types;
-
   // Flips the ember-rfc176-data mapping into an 'import' indexed object, that exposes the
   // default import as well as named imports, e.g. import {foo} from 'bar'
   const reverseMapping = {};
@@ -56,14 +55,10 @@ module.exports = function(babel) {
           let local = specifierPath.node.local;
           if (local.name !== 'Ember') {
             // Repalce the node with a new `var name = Ember`
-            replacements.push(
-              t.variableDeclaration('var', [
-                t.variableDeclarator(
-                  local,
-                  t.identifier('Ember')
-                ),
-              ])
-            );
+            replacements.push([
+              local.name,
+              'Ember',
+            ]);
           }
           removals.push(specifierPath);
         }
@@ -115,23 +110,26 @@ module.exports = function(babel) {
 
             removals.push(specifierPath);
 
-            // Repalce the node with a new `var name = Ember.something`
-            replacements.push(
-              t.variableDeclaration('var', [
-                t.variableDeclarator(
-                  local,
-                  t.memberExpression(t.identifier('Ember'), t.identifier(global))
-                ),
-              ])
-            );
+            // Replace the occurences of the imported name with the global name.
+            replacements.push([
+              local.name,
+              `Ember.${global}`,
+            ]);
           });
         }
 
-        if (removals.length > 0 && removals.length === node.specifiers.length) {
-          path.replaceWithMultiple(replacements);
-        } else if (replacements.length > 0) {
-          removals.forEach(specifierPath => specifierPath.remove());
-          path.insertAfter(replacements);
+        if (removals.length > 0) {
+          replacements.forEach(replacement => {
+            let local = replacement[0];
+            let global = replacement[1];
+            path.scope.rename(local, global);
+          });
+
+          if (removals.length === node.specifiers.length) {
+            path.remove();
+          } else {
+            removals.forEach(specifierPath => specifierPath.remove());
+          }
         }
       },
 

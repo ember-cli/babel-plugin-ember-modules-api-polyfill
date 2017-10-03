@@ -39,51 +39,69 @@ mapping.forEach(exportDefinition => {
 
   describe(`ember-modules-api-polyfill-${importRoot}-with-${importName}`, () => {
     matches(
-      `import ${localName} from '${importRoot}';`,
-      `var ${varName} = ${exportDefinition.global};`
+      `import ${localName} from '${importRoot}';var _x = ${varName}`,
+      `var _x = ${exportDefinition.global};`
     );
   });
+});
+
+// Ensure it works in complex scopes
+describe(`ember-modules-api-polyfill-import-complex-scopes`, () => {
+  matches(
+    `import { isEmpty } from '@ember/utils';
+var _x = someArray.every(item => isEmpty(item));
+var _y = someOtherArray.some((isEmpty, idx) => isEmpty(idx));`,
+    `
+var _x = someArray.every(item => Ember.isEmpty(item));
+var _y = someOtherArray.some((isEmpty, idx) => isEmpty(idx));`
+  );
+});
+
+// Ensure mapping without reference just removes the line
+describe(`ember-modules-api-polyfill-import-without-reference`, () => {
+  matches(
+    `import { empty } from '@ember/object/computed';`,
+    ``
+  );
 });
 
 // Ensure mapping multiple imports makes multiple variables
 describe(`ember-modules-api-polyfill-import-multiple`, () => {
   matches(
-    `import { empty, notEmpty } from '@ember/object/computed';`,
-    `var empty = Ember.computed.empty;
-var notEmpty = Ember.computed.notEmpty;`
+    `import { empty, notEmpty } from '@ember/object/computed';var _x = empty;var _y = notEmpty;`,
+    `var _x = Ember.computed.empty;var _y = Ember.computed.notEmpty;`
   );
 });
 
 // Ensure jQuery and RSVP imports work
 describe(`ember-modules-api-polyfill-named-as-alias`, () => {
   matches(
-    `import jQuery from 'jquery'; import RSVP from 'rsvp';`,
-    `var jQuery = Ember.$;\nvar RSVP = Ember.RSVP;`
+    `import jQuery from 'jquery'; import RSVP from 'rsvp';var $ = jQuery;var _y = RSVP`,
+    `var $ = Ember.$;var _y = Ember.RSVP;`
   );
 });
 
 // Ensure mapping a named aliased import
 describe(`ember-modules-api-polyfill-named-as-alias`, () => {
   matches(
-    `import { empty as isEmpty } from '@ember/object/computed';`,
-    `var isEmpty = Ember.computed.empty;`
+    `import { empty as isEmpty } from '@ember/object/computed';var _x = isEmpty;`,
+    `var _x = Ember.computed.empty;`
   );
 });
 
 // Ensure mapping a named and aliased import makes multiple named variables
 describe(`ember-modules-api-polyfill-import-named-multiple`, () => {
   matches(
-    `import { empty, notEmpty as foo } from '@ember/object/computed';`,
-    `var empty = Ember.computed.empty;
-var foo = Ember.computed.notEmpty;`
+    `import { empty, notEmpty as foo } from '@ember/object/computed';var _x = empty;var _y = foo;`,
+    `var _x = Ember.computed.empty;var _y = Ember.computed.notEmpty;`
   );
 });
 
 // Ensure mapping the default as an alias works
 describe(`ember-modules-api-polyfill-default-as-alias`, () => {
   matches(
-    `import { default as foo } from '@ember/component';`,
-    `var foo = Ember.Component;`
+    `import { default as foo } from '@ember/component';var _x = foo;`,
+    `var _x = Ember.Component;`
   );
 });
 
@@ -155,37 +173,37 @@ describe('options', () => {
     });
 
     it(`allows blacklisting specific named imports`, assert => {
-      let input = `import { assert, inspect } from '@ember/debug';`;
+      let input = `import { assert, inspect } from '@ember/debug';var _x = inspect`;
       let actual = transform(input, [
         [Plugin, { blacklist: { '@ember/debug': ['assert', 'warn', 'deprecate'] } }],
       ]);
 
-      assert.equal(actual, `import { assert } from '@ember/debug';\nvar inspect = Ember.inspect;`);
+      assert.equal(actual, `import { assert } from '@ember/debug';var _x = Ember.inspect;`);
     });
 
     it('does not error when a blacklist is not present', assert => {
-      let input = `import { assert, inspect } from '@ember/debug';`;
+      let input = `import { assert, inspect } from '@ember/debug';var _x = assert; var _y = inspect;`;
       let actual = transform(input, [
         [Plugin, { blacklist: { } }],
       ]);
 
-      assert.equal(actual, `var assert = Ember.assert;\nvar inspect = Ember.inspect;`);
+      assert.equal(actual, `var _x = Ember.assert;var _y = Ember.inspect;`);
     });
   });
 });
 
 describe(`import from 'ember'`, () => {
   matches(
-    `import Ember from 'ember';`,
-    ``
+    `import Ember from 'ember';var _x = Ember;`,
+    `var _x = Ember;`
   );
   matches(
-    `import Em from 'ember';`,
-    `var Em = Ember;`
+    `import Em from 'ember'; var _x = Em;`,
+    `var _x = Ember;`
   );
   matches(
-    `import Asdf from 'ember';`,
-    `var Asdf = Ember;`
+    `import Asdf from 'ember';var _x = Asdf;`,
+    `var _x = Ember;`
   );
   matches(
     `import './foo';`,
