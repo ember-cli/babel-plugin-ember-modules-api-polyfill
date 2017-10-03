@@ -1,5 +1,13 @@
 # Changelog
 
+## v2.1.0 (2017-10-03)
+
+#### :rocket: Enhancement
+* [#27](https://github.com/ember-cli/babel-plugin-ember-modules-api-polyfill/pull/27) Adapt to new data format. ([@Serabe](https://github.com/Serabe))
+
+#### Committers: 1
+- Sergio Arbeo ([Serabe](https://github.com/Serabe))
+
 ## v2.0.1 (2017-08-29)
 
 #### :bug: Bug Fix
