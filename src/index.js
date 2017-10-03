@@ -13,12 +13,7 @@ function isBlacklisted(blacklist, importPath, exportName) {
   }
 }
 
-function notifyDeprecation(msg, notifier) {
-  notifier.warn(msg);
-}
-
-module.exports = function(babel, possibleNotifier) {
-  let notifier = possibleNotifier || console;
+module.exports = function(babel) {
   const t = babel.types;
 
   // Flips the ember-rfc176-data mapping into an 'import' indexed object, that exposes the
@@ -78,10 +73,6 @@ module.exports = function(babel, possibleNotifier) {
 
         // Only walk specifiers if this is a module we have a mapping for
         if (mapping) {
-
-          if (mapping.deprecated) {
-            notifyDeprecation(`Module ${importPath} is deprecated.`, notifier);
-          }
 
           // Iterate all the specifiers and attempt to locate their mapping
           specifiers.forEach(specifierPath => {
