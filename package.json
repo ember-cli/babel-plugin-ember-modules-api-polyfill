@@ -20,7 +20,7 @@
     "qunitjs": "^2.3.3"
   },
   "dependencies": {
-    "ember-rfc176-data": "Turbo87/ember-rfc176-data#new-structure"
+    "ember-rfc176-data": "^0.3.0"
   },
   "directories": {
     "test": "tests"
