@@ -87,6 +87,44 @@ describe(`ember-modules-api-polyfill-default-as-alias`, () => {
   );
 });
 
+// Ensure reexporting things works
+describe(`ember-modules-api-polyfill-reexport`, () => {
+  matches(
+    `export { default as Component } from '@ember/component';`,
+    `export var Component = Ember.Component;`
+  );
+
+  matches(
+    `export { computed } from '@ember/object';`,
+    `export var computed = Ember.computed;`
+  );
+
+  matches(
+    `export { computed as foo } from '@ember/object';`,
+    `export var foo = Ember.computed;`
+  );
+
+  matches(
+    `export var foo = 42;`,
+    `export var foo = 42;`
+  );
+
+  it(`throws an error for wildcard exports`, assert => {
+    let input = `export * from '@ember/object/computed';`;
+
+    assert.throws(() => {
+      transform(input, [
+        [Plugin],
+      ]);
+    }, /Wildcard exports from @ember\/object\/computed are currently not possible/);
+  });
+
+  matches(
+    `export * from 'foo';`,
+    `export * from 'foo';`
+  );
+});
+
 // Ensure unknown exports are not removed
 describe(`unknown imports from known module`, () => {
   it(`allows blacklisting import paths`, assert => {
