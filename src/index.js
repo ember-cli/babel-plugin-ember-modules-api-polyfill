@@ -110,7 +110,7 @@ module.exports = function(babel) {
 
             // Ensure the module being imported exists
             if (!global) {
-              throw path.buildCodeFrameError(`${importPath} does not have a ${importName} import`);
+              throw path.buildCodeFrameError(`${importPath} does not have a ${importName} export`);
             }
 
             removals.push(specifierPath);
