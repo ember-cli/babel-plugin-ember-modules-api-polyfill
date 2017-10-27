@@ -134,6 +134,19 @@ module.exports = function(babel) {
           path.insertAfter(replacements);
         }
       },
+
+      ExportAllDeclaration(path) {
+        let node = path.node;
+        let importPath = node.source.value;
+
+        // This is the mapping to use for the import statement
+        const mapping = reverseMapping[importPath];
+
+        // Only walk specifiers if this is a module we have a mapping for
+        if (mapping) {
+          throw path.buildCodeFrameError(`Wildcard exports from ${importPath} are currently not possible`);
+        }
+      },
     },
   };
 };
