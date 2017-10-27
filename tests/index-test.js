@@ -96,7 +96,7 @@ describe(`unknown imports from known module`, () => {
       transform(input, [
         [Plugin],
       ]);
-    }, /@ember\/object\/computed does not have a derp import/);
+    }, /@ember\/object\/computed does not have a derp export/);
   });
 });
 
