@@ -1,5 +1,15 @@
 # Changelog
 
+## v2.2.0 (2017-10-27)
+
+#### :bug: Bug Fix
+* [#31](https://github.com/ember-cli/babel-plugin-ember-modules-api-polyfill/pull/31)  Allow `export { computed } from '@ember/object'` to work. ([@Turbo87](https://github.com/Turbo87))
+* [#30](https://github.com/ember-cli/babel-plugin-ember-modules-api-polyfill/pull/30) Fix confusing "missing import" warning. ([@Turbo87](https://github.com/Turbo87))
+
+#### Committers: 1
+- Tobias Bieniek ([Turbo87](https://github.com/Turbo87))
+
+
 ## v2.1.0 (2017-10-03)
 
 #### :rocket: Enhancement
@@ -7,6 +17,7 @@
 
 #### Committers: 1
 - Sergio Arbeo ([Serabe](https://github.com/Serabe))
+
 
 ## v2.0.1 (2017-08-29)
 
