@@ -135,6 +135,83 @@ module.exports = function(babel) {
         }
       },
 
+      ExportNamedDeclaration(path, state) {
+        let blacklist = (state.opts && state.opts.blacklist) || [];
+        let node = path.node;
+        if (!node.source) {
+          return;
+        }
+
+        let replacements = [];
+        let removals = [];
+        let specifiers = path.get('specifiers');
+        let importPath = node.source.value;
+
+        // This is the mapping to use for the import statement
+        const mapping = reverseMapping[importPath];
+
+        // Only walk specifiers if this is a module we have a mapping for
+        if (mapping) {
+
+          // Iterate all the specifiers and attempt to locate their mapping
+          specifiers.forEach(specifierPath => {
+            let specifier = specifierPath.node;
+
+            // exported is the name of the module being export,
+            // e.g. `foo` in `export { computed as foo } from '@ember/object';`
+            const exported = specifier.exported;
+
+            // local is the original name of the module, this is usually the same
+            // as the exported value, unless the module is aliased
+            const local = specifier.local;
+
+            // We only care about the ExportSpecifier
+            if (specifier.type !== 'ExportSpecifier') {
+              return;
+            }
+
+            // Determine the import name, either default or named
+            let importName = local.name;
+
+            if (isBlacklisted(blacklist, importPath, importName)) {
+              return;
+            }
+
+            // Extract the global mapping
+            const global = mapping[importName];
+
+            // Ensure the module being imported exists
+            if (!global) {
+              throw path.buildCodeFrameError(`${importPath} does not have a ${importName} export`);
+            }
+
+            removals.push(specifierPath);
+
+            // Repalce the node with a new `var name = Ember.something`
+            replacements.push(
+              t.exportNamedDeclaration(
+                t.variableDeclaration('var', [
+                  t.variableDeclarator(
+                    exported,
+                    t.memberExpression(t.identifier('Ember'), t.identifier(global))
+                  ),
+                ]),
+                [],
+                null
+              )
+            );
+
+          });
+        }
+
+        if (removals.length > 0 && removals.length === node.specifiers.length) {
+          path.replaceWithMultiple(replacements);
+        } else if (replacements.length > 0) {
+          removals.forEach(specifierPath => specifierPath.remove());
+          path.insertAfter(replacements);
+        }
+      },
+
       ExportAllDeclaration(path) {
         let node = path.node;
         let importPath = node.source.value;
