@@ -90,6 +90,11 @@ describe(`ember-modules-api-polyfill-default-as-alias`, () => {
 // Ensure reexporting things works
 describe(`ember-modules-api-polyfill-reexport`, () => {
   matches(
+    `export { default } from '@ember/component';`,
+    `export default Ember.Component;`
+  );
+
+  matches(
     `export { default as Component } from '@ember/component';`,
     `export var Component = Ember.Component;`
   );
