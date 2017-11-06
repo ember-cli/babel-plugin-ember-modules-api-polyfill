@@ -187,19 +187,26 @@ module.exports = function(babel) {
 
             removals.push(specifierPath);
 
-            // Repalce the node with a new `var name = Ember.something`
-            replacements.push(
-              t.exportNamedDeclaration(
+            let declaration;
+            const memberExpression = t.memberExpression(t.identifier('Ember'), t.identifier(global));
+            if (exported.name === 'default') {
+              declaration = t.exportDefaultDeclaration(
+                memberExpression
+              );
+            } else {
+              // Replace the node with a new `var name = Ember.something`
+              declaration = t.exportNamedDeclaration(
                 t.variableDeclaration('var', [
                   t.variableDeclarator(
                     exported,
-                    t.memberExpression(t.identifier('Ember'), t.identifier(global))
+                    memberExpression
                   ),
                 ]),
                 [],
                 null
-              )
-            );
+              );
+            }
+            replacements.push(declaration);
 
           });
         }
