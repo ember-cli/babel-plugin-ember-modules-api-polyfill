@@ -1,5 +1,14 @@
 # Changelog
 
+## v2.2.1 (2017-11-06)
+
+#### :bug: Bug Fix
+* [#32](https://github.com/ember-cli/babel-plugin-ember-modules-api-polyfill/pull/32) Fix reexporting `default`. ([@xcambar](https://github.com/xcambar))
+
+#### Committers: 1
+- Xavier Cambar ([xcambar](https://github.com/xcambar))
+
+
 ## v2.2.0 (2017-10-27)
 
 #### :bug: Bug Fix
