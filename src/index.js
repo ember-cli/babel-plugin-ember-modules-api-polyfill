@@ -19,7 +19,7 @@ module.exports = function(babel) {
   // default import as well as named imports, e.g. import {foo} from 'bar'
   const reverseMapping = {};
   mapping.forEach(exportDefinition => {
-    const imported = exportDefinition.global.substr('Ember.'.length);
+    const imported = exportDefinition.global;
     const importRoot = exportDefinition.module;
     let importName = exportDefinition.export;
 
@@ -54,7 +54,6 @@ module.exports = function(babel) {
 
           let local = specifierPath.node.local;
           if (local.name !== 'Ember') {
-            // Repalce the node with a new `var name = Ember`
             replacements.push([
               local.name,
               'Ember',
@@ -113,7 +112,7 @@ module.exports = function(babel) {
             // Replace the occurences of the imported name with the global name.
             replacements.push([
               local.name,
-              `Ember.${global}`,
+              global,
             ]);
           });
         }
@@ -186,10 +185,10 @@ module.exports = function(babel) {
             removals.push(specifierPath);
 
             let declaration;
-            const memberExpression = t.memberExpression(t.identifier('Ember'), t.identifier(global));
+            const globalAsIdentifier = t.identifier(global);
             if (exported.name === 'default') {
               declaration = t.exportDefaultDeclaration(
-                memberExpression
+                globalAsIdentifier
               );
             } else {
               // Replace the node with a new `var name = Ember.something`
@@ -197,7 +196,7 @@ module.exports = function(babel) {
                 t.variableDeclaration('var', [
                   t.variableDeclarator(
                     exported,
-                    memberExpression
+                    globalAsIdentifier
                   ),
                 ]),
                 [],
