@@ -132,6 +132,16 @@ describe(`ember-modules-api-polyfill-reexport`, () => {
     `export var foo = 42;`
   );
 
+  it(`throws an error for wildcard imports`, assert => {
+    let input = `import * as debug from '@ember/debug';`;
+
+    assert.throws(() => {
+      transform(input, [
+        [Plugin],
+      ]);
+    }, 'Using `import * as debug from \'@ember/debug\'` is not supported');
+  });
+
   it(`throws an error for wildcard exports`, assert => {
     let input = `export * from '@ember/object/computed';`;
 
