@@ -85,6 +85,9 @@ module.exports = function(babel) {
               specifier.type !== 'ImportDefaultSpecifier' &&
               specifier.type !== 'ImportSpecifier'
             ) {
+              if (specifier.type === 'ImportNamespaceSpecifier') {
+                throw new Error(`Using \`import * as ${specifier.local} from '${importPath}'\` is not supported.`);
+              }
               return;
             }
 
