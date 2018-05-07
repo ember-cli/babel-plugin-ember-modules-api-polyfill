@@ -27,7 +27,7 @@ function matches(source, expected) {
 }
 
 // Ensure each of the config mappings is mapped correctly
-mapping.forEach(exportDefinition => {
+(mapping.forEach ? mapping : Object.values(mapping)).forEach(exportDefinition => {
   const importRoot = exportDefinition.module;
 
   let importName = exportDefinition.export;

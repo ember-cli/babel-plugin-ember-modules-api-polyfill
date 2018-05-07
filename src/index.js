@@ -18,7 +18,7 @@ module.exports = function(babel) {
   // Flips the ember-rfc176-data mapping into an 'import' indexed object, that exposes the
   // default import as well as named imports, e.g. import {foo} from 'bar'
   const reverseMapping = {};
-  mapping.forEach(exportDefinition => {
+  (mapping.forEach ? mapping : Object.values(mapping)).forEach(exportDefinition => {
     const imported = exportDefinition.global;
     const importRoot = exportDefinition.module;
     let importName = exportDefinition.export;
