@@ -18,8 +18,8 @@ function transform(source, _plugins) {
   return result.code;
 }
 
-function matches(source, expected) {
-  it(`${source}`, assert => {
+function matches(source, expected, only) {
+  (only ? QUnit.only : it)(`${source}`, assert => {
     let actual = transform(source);
 
     assert.equal(actual, expected);
