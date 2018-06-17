@@ -52,14 +52,19 @@ module.exports = function(babel) {
             throw new Error(`Unexpected non-default import from 'ember'`);
           });
 
-          let local = specifierPath.node.local;
-          if (local.name !== 'Ember') {
-            replacements.push([
-              local.name,
-              'Ember',
-            ]);
+          if (specifierPath) {
+            let local = specifierPath.node.local;
+            if (local.name !== 'Ember') {
+              replacements.push([
+                local.name,
+                'Ember',
+              ]);
+            }
+            removals.push(specifierPath);
+          } else {
+            // import 'ember';
+            path.remove();
           }
-          removals.push(specifierPath);
         }
 
         // This is the mapping to use for the import statement
