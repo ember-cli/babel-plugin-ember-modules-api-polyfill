@@ -3,10 +3,11 @@
 ## v2.3.1 (2018-06-17)
 
 #### :bug: Bug Fix
-* [#32](https://github.com/ember-cli/babel-plugin-ember-modules-api-polyfill/pull/38) remove `import 'ember';` instead of error.   ([@kellyselden](https://github.com/kellyselden))
+* [#38](https://github.com/ember-cli/babel-plugin-ember-modules-api-polyfill/pull/38) remove `import 'ember';` instead of error.   ([@kellyselden](https://github.com/kellyselden))
 
 #### Committers: 1
-- Xavier Cambar ([kellyselden](https://github.com/kellyselden))
+- Kelly Selden ([kellyselden](https://github.com/kellyselden))
+
 
 ## v2.2.1 (2017-11-06)
 
