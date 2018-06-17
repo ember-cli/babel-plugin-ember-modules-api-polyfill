@@ -216,6 +216,10 @@ describe(`import from 'ember'`, () => {
     `var _x = Ember;`
   );
   matches(
+    `import 'ember';`,
+    ``
+  );
+  matches(
     `import './foo';`,
     `import './foo';`
   );
