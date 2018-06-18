@@ -216,12 +216,19 @@ describe(`import from 'ember'`, () => {
     `var _x = Ember;`
   );
   matches(
+    `import './foo';`,
+    `import './foo';`
+  );
+});
+
+describe(`import without specifier is removed`, () => {
+  matches(
     `import 'ember';`,
     ``
   );
   matches(
-    `import './foo';`,
-    `import './foo';`
+    `import '@ember/component';`,
+    ``
   );
 });
 
