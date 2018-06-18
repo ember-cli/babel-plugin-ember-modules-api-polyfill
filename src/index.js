@@ -125,7 +125,7 @@ module.exports = function(babel) {
           });
         }
 
-        if (removals.length > 0) {
+        if (removals.length > 0 || mapping) {
           replacements.forEach(replacement => {
             let local = replacement[0];
             let global = replacement[1];
