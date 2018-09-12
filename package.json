@@ -20,7 +20,7 @@
     "qunitjs": "^2.3.3"
   },
   "dependencies": {
-    "ember-rfc176-data": "^0.3.0"
+    "ember-rfc176-data": "^0.3.4"
   },
   "directories": {
     "test": "tests"
