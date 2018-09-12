@@ -1,5 +1,13 @@
 # Changelog
 
+## v2.4.0 (2018-09-12)
+
+#### :rocket: Enhancement
+* Update minimum version of ember-rfc176-data to 0.3.4 ([@rwjblue](https://github.com/rwjblue))
+
+#### Committers: 1
+- Robert Jackson ([rwjblue](https://github.com/rwjblue))
+
 ## v2.3.2 (2018-06-18)
 
 #### :bug: Bug Fix
