@@ -16,7 +16,7 @@
   "devDependencies": {
     "babel-core": "^6.25.0",
     "lerna-changelog": "^0.6.0",
-    "qunit-eslint": "^1.0.0",
+    "qunit-eslint": "^2.0.0",
     "qunit": "^2.6.2"
   },
   "dependencies": {
