@@ -1689,8 +1689,8 @@ qunit-eslint@^1.0.0:
     walk-sync "^0.3.1"
 
 qunitjs@^2.3.3:
-  version "2.3.3"
-  resolved "https://registry.yarnpkg.com/qunitjs/-/qunitjs-2.3.3.tgz#456696bdd61a2c8b5bc8f053f00e20d75a73d539"
+  version "2.4.1"
+  resolved "https://registry.yarnpkg.com/qunitjs/-/qunitjs-2.4.1.tgz#88aba055a9e2ec3dbebfaad02471b2cb002c530b"
   dependencies:
     chokidar "1.6.1"
     commander "2.9.0"
