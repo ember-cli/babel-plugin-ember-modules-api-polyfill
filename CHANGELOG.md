@@ -1,5 +1,15 @@
 # Changelog
 
+## v2.6.0 (2018-12-12)
+
+#### :rocket: Enhancement
+* [#53](https://github.com/ember-cli/babel-plugin-ember-modules-api-polyfill/pull/53) Update ember-rfc176-data to 0.3.6.. ([@rwjblue](https://github.com/rwjblue))
+
+#### Committers: 3
+- Robert Jackson ([rwjblue](https://github.com/rwjblue))
+- Tobias Bieniek ([Turbo87](https://github.com/Turbo87))
+- [dependabot[bot]](https://github.com/apps/dependabot)
+
 ## v2.5.0 (2018-09-12)
 
 #### :rocket: Enhancement
