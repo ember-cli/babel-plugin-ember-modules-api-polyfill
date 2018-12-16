@@ -37,6 +37,7 @@ module.exports = function(babel) {
         let blacklist = (state.opts && state.opts.blacklist) || [];
         let node = path.node;
         let replacements = [];
+        let declarations = [];
         let removals = [];
         let specifiers = path.get('specifiers');
         let importPath = node.source.value;
@@ -117,11 +118,21 @@ module.exports = function(babel) {
 
             removals.push(specifierPath);
 
-            // Replace the occurences of the imported name with the global name.
-            replacements.push([
-              local.name,
-              global,
-            ]);
+            if (path.scope.bindings[local.name].referencePaths.find(rp => rp.parent.type === 'ExportSpecifier')) {
+              // not safe to use path.scope.rename directly
+              declarations.push(t.variableDeclaration('var', [
+                t.variableDeclarator(
+                  t.identifier(local.name),
+                  t.identifier(global)
+                ),
+              ]));
+            } else {
+              // Replace the occurences of the imported name with the global name.
+              replacements.push([
+                local.name,
+                global,
+              ]);
+            }
           });
         }
 
@@ -133,9 +144,10 @@ module.exports = function(babel) {
           });
 
           if (removals.length === node.specifiers.length) {
-            path.remove();
+            path.replaceWithMultiple(declarations);
           } else {
             removals.forEach(specifierPath => specifierPath.remove());
+            path.insertAfter(declarations);
           }
         }
       },

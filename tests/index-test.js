@@ -171,6 +171,27 @@ describe(`unknown imports from known module`, () => {
   });
 });
 
+describe(`import then export`, () => {
+  matches(
+    `import { capitalize } from '@ember/string';
+export { capitalize };`,
+    `var capitalize = Ember.String.capitalize;
+
+export { capitalize };`
+  );
+  matches(
+    `import { capitalize, camelize } from '@ember/string';
+    camelize("a thing");
+    capitalize("another thing");
+    export { capitalize };`,
+    `var capitalize = Ember.String.capitalize;
+
+Ember.String.camelize("a thing");
+capitalize("another thing");
+export { capitalize };`
+  );
+});
+
 describe('options', () => {
   describe('blacklist', () => {
     it(`allows blacklisting import paths`, assert => {
