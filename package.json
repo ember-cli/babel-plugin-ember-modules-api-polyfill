@@ -33,6 +33,9 @@
     "url": "https://github.com/ember-cli/babel-plugin-ember-modules-api-polyfill/issues"
   },
   "homepage": "https://github.com/ember-cli/babel-plugin-ember-modules-api-polyfill#readme",
+  "engines": {
+    "node": "6.* || 8.* || >= 10.*"
+  },
   "changelog": {
     "repo": "ember-cli/babel-plugin-ember-modules-api-polyfill",
     "labels": {
