@@ -20,7 +20,7 @@
     "qunit-eslint": "^2.0.0"
   },
   "dependencies": {
-    "ember-rfc176-data": "^0.3.7"
+    "ember-rfc176-data": "^0.3.8"
   },
   "directories": {
     "test": "tests"
