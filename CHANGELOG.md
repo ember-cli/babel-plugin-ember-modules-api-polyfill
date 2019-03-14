@@ -1,5 +1,13 @@
 # Changelog
 
+## v2.8.0 (2019-03-14)
+
+#### :rocket: Enhancement
+* [2c62752](https://github.com/ember-cli/babel-plugin-ember-modules-api-polyfill/commit/2c62752) Update ember-rfc176-data to 0.3.8. ([@rwjblue](https://github.com/rwjblue))
+
+#### Committers: 1
+- Robert Jackson ([rwjblue](https://github.com/rwjblue))
+
 ## v2.7.0 (2019-02-22)
 
 #### :rocket: Enhancement
