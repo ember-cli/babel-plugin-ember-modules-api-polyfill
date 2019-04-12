@@ -1,5 +1,13 @@
 # Changelog
 
+## v2.9.0 (2019-04-12)
+
+#### :rocket: Enhancement
+* [#59](https://github.com/ember-cli/babel-plugin-ember-modules-api-polyfill/pull/59) Update rfc176-data to add setModifierManager API ([@jordpo](https://github.com/jordpo))
+
+#### Committers: 1
+- Jordan Morano ([@jordpo](https://github.com/jordpo))
+
 ## v2.8.0 (2019-03-14)
 
 #### :rocket: Enhancement
