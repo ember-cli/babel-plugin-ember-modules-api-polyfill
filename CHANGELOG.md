@@ -1,3 +1,12 @@
+## v2.10.0 (2019-08-12)
+
+#### :rocket: Enhancement
+* [#62](https://github.com/ember-cli/babel-plugin-ember-modules-api-polyfill/pull/62) Update ember-rfc176-data to 0.3.10 for colocation support. ([@rwjblue](https://github.com/rwjblue))
+
+#### Committers: 2
+- Robert Jackson ([@rwjblue](https://github.com/rwjblue))
+- Stefan Penner ([@stefanpenner](https://github.com/stefanpenner))
+
 # Changelog
 
 ## v2.9.0 (2019-04-12)
