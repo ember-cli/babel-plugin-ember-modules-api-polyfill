@@ -7,6 +7,9 @@ node_js:
 
 cache: yarn
 
+install:
+  - yarn install --ignore-engines
+
 script:
   - yarn test
 
