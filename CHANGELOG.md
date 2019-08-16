@@ -1,3 +1,11 @@
+## v2.11.0 (2019-08-16)
+
+#### :rocket: Enhancement
+* [#63](https://github.com/ember-cli/babel-plugin-ember-modules-api-polyfill/pull/63) Update ember-rfc176-data to get modifier manager capabilities. ([@rwjblue](https://github.com/rwjblue))
+
+#### Committers: 1
+- Robert Jackson ([@rwjblue](https://github.com/rwjblue))
+
 ## v2.10.0 (2019-08-12)
 
 #### :rocket: Enhancement
