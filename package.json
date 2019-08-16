@@ -25,7 +25,7 @@
     "test": "qunit tests/**/*-test.js"
   },
   "dependencies": {
-    "ember-rfc176-data": "^0.3.10"
+    "ember-rfc176-data": "^0.3.11"
   },
   "devDependencies": {
     "babel-core": "^6.25.0",
