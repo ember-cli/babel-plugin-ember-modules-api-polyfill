@@ -33,7 +33,7 @@
     "qunit": "^2.9.3",
     "qunit-eslint": "^2.0.0",
     "release-it": "^13.5.4",
-    "release-it-lerna-changelog": "^2.1.2"
+    "release-it-lerna-changelog": "^2.2.0"
   },
   "engines": {
     "node": "6.* || 8.* || >= 10.*"
