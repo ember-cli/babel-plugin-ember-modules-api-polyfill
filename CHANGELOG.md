@@ -1,3 +1,12 @@
+## v2.13.0 (2020-05-19)
+
+#### :rocket: Enhancement
+* [#101](https://github.com/ember-cli/babel-plugin-ember-modules-api-polyfill/pull/101) Add support for `import { createCache, getValue, isConst } from '@glimmer/tracking/primitives/cache'` ([@rwjblue](https://github.com/rwjblue))
+
+#### Committers: 1
+- Robert Jackson ([@rwjblue](https://github.com/rwjblue))
+
+
 ## v2.12.0 (2019-08-28)
 
 #### :rocket: Enhancement
