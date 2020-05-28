@@ -13,12 +13,12 @@ function isBlacklisted(blacklist, importPath, exportName) {
   }
 }
 
-module.exports = function(babel) {
+module.exports = function (babel) {
   const t = babel.types;
   // Flips the ember-rfc176-data mapping into an 'import' indexed object, that exposes the
   // default import as well as named imports, e.g. import {foo} from 'bar'
   const reverseMapping = {};
-  mapping.forEach(exportDefinition => {
+  mapping.forEach((exportDefinition) => {
     const imported = exportDefinition.global;
     const importRoot = exportDefinition.module;
     let importName = exportDefinition.export;
@@ -45,7 +45,7 @@ module.exports = function(babel) {
         if (importPath === 'ember') {
           // For `import Ember from 'ember'`, we can just remove the import
           // and change `Ember` usage to to global Ember object.
-          let specifierPath = specifiers.find(specifierPath => {
+          let specifierPath = specifiers.find((specifierPath) => {
             if (specifierPath.isImportDefaultSpecifier()) {
               return true;
             }
@@ -56,10 +56,7 @@ module.exports = function(babel) {
           if (specifierPath) {
             let local = specifierPath.node.local;
             if (local.name !== 'Ember') {
-              replacements.push([
-                local.name,
-                'Ember',
-              ]);
+              replacements.push([local.name, 'Ember']);
             }
             removals.push(specifierPath);
           } else {
@@ -73,9 +70,8 @@ module.exports = function(babel) {
 
         // Only walk specifiers if this is a module we have a mapping for
         if (mapping) {
-
           // Iterate all the specifiers and attempt to locate their mapping
-          specifiers.forEach(specifierPath => {
+          specifiers.forEach((specifierPath) => {
             let specifier = specifierPath.node;
             let importName;
 
@@ -92,7 +88,9 @@ module.exports = function(babel) {
               specifier.type !== 'ImportSpecifier'
             ) {
               if (specifier.type === 'ImportNamespaceSpecifier') {
-                throw new Error(`Using \`import * as ${specifier.local} from '${importPath}'\` is not supported.`);
+                throw new Error(
+                  `Using \`import * as ${specifier.local} from '${importPath}'\` is not supported.`
+                );
               }
               return;
             }
@@ -113,31 +111,36 @@ module.exports = function(babel) {
 
             // Ensure the module being imported exists
             if (!global) {
-              throw path.buildCodeFrameError(`${importPath} does not have a ${importName} export`);
+              throw path.buildCodeFrameError(
+                `${importPath} does not have a ${importName} export`
+              );
             }
 
             removals.push(specifierPath);
 
-            if (path.scope.bindings[local.name].referencePaths.find(rp => rp.parent.type === 'ExportSpecifier')) {
+            if (
+              path.scope.bindings[local.name].referencePaths.find(
+                (rp) => rp.parent.type === 'ExportSpecifier'
+              )
+            ) {
               // not safe to use path.scope.rename directly
-              declarations.push(t.variableDeclaration('var', [
-                t.variableDeclarator(
-                  t.identifier(local.name),
-                  t.identifier(global)
-                ),
-              ]));
+              declarations.push(
+                t.variableDeclaration('var', [
+                  t.variableDeclarator(
+                    t.identifier(local.name),
+                    t.identifier(global)
+                  ),
+                ])
+              );
             } else {
               // Replace the occurences of the imported name with the global name.
-              replacements.push([
-                local.name,
-                global,
-              ]);
+              replacements.push([local.name, global]);
             }
           });
         }
 
         if (removals.length > 0 || mapping) {
-          replacements.forEach(replacement => {
+          replacements.forEach((replacement) => {
             let local = replacement[0];
             let global = replacement[1];
             path.scope.rename(local, global);
@@ -146,7 +149,7 @@ module.exports = function(babel) {
           if (removals.length === node.specifiers.length) {
             path.replaceWithMultiple(declarations);
           } else {
-            removals.forEach(specifierPath => specifierPath.remove());
+            removals.forEach((specifierPath) => specifierPath.remove());
             path.insertAfter(declarations);
           }
         }
@@ -169,9 +172,8 @@ module.exports = function(babel) {
 
         // Only walk specifiers if this is a module we have a mapping for
         if (mapping) {
-
           // Iterate all the specifiers and attempt to locate their mapping
-          specifiers.forEach(specifierPath => {
+          specifiers.forEach((specifierPath) => {
             let specifier = specifierPath.node;
 
             // exported is the name of the module being export,
@@ -199,7 +201,9 @@ module.exports = function(babel) {
 
             // Ensure the module being imported exists
             if (!global) {
-              throw path.buildCodeFrameError(`${importPath} does not have a ${importName} export`);
+              throw path.buildCodeFrameError(
+                `${importPath} does not have a ${importName} export`
+              );
             }
 
             removals.push(specifierPath);
@@ -207,31 +211,25 @@ module.exports = function(babel) {
             let declaration;
             const globalAsIdentifier = t.identifier(global);
             if (exported.name === 'default') {
-              declaration = t.exportDefaultDeclaration(
-                globalAsIdentifier
-              );
+              declaration = t.exportDefaultDeclaration(globalAsIdentifier);
             } else {
               // Replace the node with a new `var name = Ember.something`
               declaration = t.exportNamedDeclaration(
                 t.variableDeclaration('var', [
-                  t.variableDeclarator(
-                    exported,
-                    globalAsIdentifier
-                  ),
+                  t.variableDeclarator(exported, globalAsIdentifier),
                 ]),
                 [],
                 null
               );
             }
             replacements.push(declaration);
-
           });
         }
 
         if (removals.length > 0 && removals.length === node.specifiers.length) {
           path.replaceWithMultiple(replacements);
         } else if (replacements.length > 0) {
-          removals.forEach(specifierPath => specifierPath.remove());
+          removals.forEach((specifierPath) => specifierPath.remove());
           path.insertAfter(replacements);
         }
       },
@@ -245,7 +243,9 @@ module.exports = function(babel) {
 
         // Only walk specifiers if this is a module we have a mapping for
         if (mapping) {
-          throw path.buildCodeFrameError(`Wildcard exports from ${importPath} are currently not possible`);
+          throw path.buildCodeFrameError(
+            `Wildcard exports from ${importPath} are currently not possible`
+          );
         }
       },
     },
