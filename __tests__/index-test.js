@@ -1,14 +1,24 @@
 'use strict';
 
-const babel = require('babel-core');
+const babel6 = require('babel-core');
+const babel7 = require('@babel/core');
 const Plugin = require('../src');
 const mapping = require('ember-rfc176-data');
 
 function transform(source, _plugins) {
   let plugins = _plugins || [[Plugin]];
-  let result = babel.transform(source, {
+
+  let result = babel6.transform(source, {
     plugins,
   });
+
+  return result.code;
+}
+
+function transform7(source, _plugins) {
+  let plugins = _plugins || [[Plugin]];
+
+  let result = babel7.transformSync(source, { plugins });
 
   return result.code;
 }
@@ -32,11 +42,25 @@ mapping.forEach((exportDefinition) => {
   const varName = importName === 'default' ? 'defaultModule' : importName;
   const localName = varName === 'defaultModule' ? varName : `{ ${varName} }`;
 
-  describe(`ember-modules-api-polyfill-${importRoot}-with-${importName}`, () => {
-    matches(
-      `import ${localName} from '${importRoot}';var _x = ${varName}`,
-      `var _x = ${exportDefinition.global};`
-    );
+  describe(`${importRoot}`, () => {
+    const source = `import ${localName} from '${importRoot}';var _x = ${varName}`;
+    const expected = `var _x = ${exportDefinition.global};`;
+
+    describe('babel@6', () => {
+      it(`${source}`, () => {
+        let actual = transform(source);
+
+        expect(actual).toEqual(expected);
+      });
+    });
+
+    describe('babel@7', () => {
+      it(`${source}`, () => {
+        let actual = transform7(source);
+
+        expect(actual).toEqual(expected);
+      });
+    });
   });
 });
 

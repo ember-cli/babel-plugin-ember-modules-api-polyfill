@@ -31,6 +31,8 @@
     "ember-rfc176-data": "^0.3.13"
   },
   "devDependencies": {
+    "@babel/core": "^7.10.1",
+    "@babel/preset-env": "^7.10.1",
     "babel-core": "^6.25.0",
     "eslint": "^7.1.0",
     "eslint-config-prettier": "^6.11.0",
