@@ -89,7 +89,7 @@ module.exports = function (babel) {
             ) {
               if (specifier.type === 'ImportNamespaceSpecifier') {
                 throw new Error(
-                  `Using \`import * as ${specifier.local} from '${importPath}'\` is not supported.`
+                  `Using \`import * as ${specifier.local.name} from '${importPath}'\` is not supported.`
                 );
               }
               return;
