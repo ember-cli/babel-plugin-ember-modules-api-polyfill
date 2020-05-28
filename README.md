@@ -1,7 +1,5 @@
 # babel-plugin-ember-modules-api-polyfill
 
-[![Greenkeeper badge](https://badges.greenkeeper.io/ember-cli/babel-plugin-ember-modules-api-polyfill.svg)](https://greenkeeper.io/)
-
 > This plugin transforms [JavaScript modules API](https://github.com/emberjs/rfcs/blob/master/text/0176-javascript-module-api.md) import statements
 > back to the legacy "global" ember object syntax
 
