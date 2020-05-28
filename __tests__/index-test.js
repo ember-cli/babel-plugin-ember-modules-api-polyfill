@@ -1,8 +1,5 @@
 'use strict';
-/* globals QUnit */
 
-const describe = QUnit.module;
-const it = QUnit.test;
 const babel = require('babel-core');
 const Plugin = require('../src');
 const mapping = require('ember-rfc176-data');
@@ -17,10 +14,10 @@ function transform(source, _plugins) {
 }
 
 function matches(source, expected, only) {
-  (only ? QUnit.only : it)(`${source}`, (assert) => {
+  (only ? it.only : it)(`${source}`, () => {
     let actual = transform(source);
 
-    assert.equal(actual, expected);
+    expect(actual).toEqual(expected);
   });
 }
 
@@ -124,20 +121,24 @@ describe(`ember-modules-api-polyfill-reexport`, () => {
 
   matches(`export var foo = 42;`, `export var foo = 42;`);
 
-  it(`throws an error for wildcard imports`, (assert) => {
+  it(`throws an error for wildcard imports`, () => {
     let input = `import * as debug from '@ember/debug';`;
 
-    assert.throws(() => {
+    expect(() => {
       transform(input, [[Plugin]]);
-    }, "Using `import * as debug from '@ember/debug'` is not supported");
+    }).toThrow(
+      /Using `import \* as debug from '@ember\/debug'` is not supported/
+    );
   });
 
-  it(`throws an error for wildcard exports`, (assert) => {
+  it(`throws an error for wildcard exports`, () => {
     let input = `export * from '@ember/object/computed';`;
 
-    assert.throws(() => {
+    expect(() => {
       transform(input, [[Plugin]]);
-    }, /Wildcard exports from @ember\/object\/computed are currently not possible/);
+    }).toThrow(
+      /Wildcard exports from @ember\/object\/computed are currently not possible/
+    );
   });
 
   matches(`export * from 'foo';`, `export * from 'foo';`);
@@ -145,12 +146,12 @@ describe(`ember-modules-api-polyfill-reexport`, () => {
 
 // Ensure unknown exports are not removed
 describe(`unknown imports from known module`, () => {
-  it(`allows blacklisting import paths`, (assert) => {
+  it(`allows blacklisting import paths`, () => {
     let input = `import { derp } from '@ember/object/computed';`;
 
-    assert.throws(() => {
+    expect(() => {
       transform(input, [[Plugin]]);
-    }, /@ember\/object\/computed does not have a derp export/);
+    }).toThrow(/@ember\/object\/computed does not have a derp export/);
   });
 });
 
@@ -177,16 +178,16 @@ export { capitalize };`
 
 describe('options', () => {
   describe('blacklist', () => {
-    it(`allows blacklisting import paths`, (assert) => {
+    it(`allows blacklisting import paths`, () => {
       let input = `import { assert } from '@ember/debug';`;
       let actual = transform(input, [
         [Plugin, { blacklist: ['@ember/debug'] }],
       ]);
 
-      assert.equal(actual, input);
+      expect(actual).toEqual(input);
     });
 
-    it(`allows blacklisting specific named imports`, (assert) => {
+    it(`allows blacklisting specific named imports`, () => {
       let input = `import { assert, inspect } from '@ember/debug';var _x = inspect`;
       let actual = transform(input, [
         [
@@ -195,17 +196,16 @@ describe('options', () => {
         ],
       ]);
 
-      assert.equal(
-        actual,
+      expect(actual).toEqual(
         `import { assert } from '@ember/debug';var _x = Ember.inspect;`
       );
     });
 
-    it('does not error when a blacklist is not present', (assert) => {
+    it('does not error when a blacklist is not present', () => {
       let input = `import { assert, inspect } from '@ember/debug';var _x = assert; var _y = inspect;`;
       let actual = transform(input, [[Plugin, { blacklist: {} }]]);
 
-      assert.equal(actual, `var _x = Ember.assert;var _y = Ember.inspect;`);
+      expect(actual).toEqual(`var _x = Ember.assert;var _y = Ember.inspect;`);
     });
   });
 });
