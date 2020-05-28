@@ -20,6 +20,7 @@
     "test": "tests"
   },
   "scripts": {
+    "lint": "eslint .",
     "start": "qunit --watch tests/**/*-test.js",
     "test": "qunit tests/**/*-test.js"
   },
@@ -28,8 +29,8 @@
   },
   "devDependencies": {
     "babel-core": "^6.25.0",
+    "eslint": "^4.19.1",
     "qunit": "^2.10.0",
-    "qunit-eslint": "^2.0.0",
     "release-it": "^13.6.0",
     "release-it-lerna-changelog": "^2.3.0"
   },
