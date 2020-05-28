@@ -15,4 +15,12 @@ module.exports = {
     es6: true,
   },
   rules: {},
+  overrides: [
+    {
+      files: ['__tests__/**/*.js'],
+      env: {
+        jest: true,
+      },
+    },
+  ],
 };
