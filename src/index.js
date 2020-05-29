@@ -16,7 +16,14 @@ function isBlacklisted(blacklist, importPath, exportName) {
 module.exports = function (babel) {
   const t = babel.types;
 
-  const isTypescriptNode = (node) => node.type.startsWith('TS');
+  const TSTypesRequiringModification = [
+    'TSAsExpression',
+    'TSTypeAssertion',
+    'TSNonNullExpression',
+  ];
+  const isTypescriptNode = (node) =>
+    node.type.startsWith('TS') &&
+    !TSTypesRequiringModification.includes(node.type);
 
   const GLOBALS_MAP = new Map();
 

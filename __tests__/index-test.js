@@ -308,4 +308,46 @@ describe('when used with typescript', () => {
 
     expect(actual).toEqual(``);
   });
+
+  it('works when type casting', () => {
+    let source = `
+      import { addObserver } from '@ember/object/observers';
+      (addObserver as any)();
+   `;
+
+    let actual = transform7(source, [
+      '@babel/plugin-transform-typescript',
+      Plugin,
+    ]);
+
+    expect(actual).toEqual(`Ember.addObserver();`);
+  });
+
+  it('works for type assertions', () => {
+    let source = `
+      import { addObserver } from '@ember/object/observers';
+      <foo>addObserver();
+   `;
+
+    let actual = transform7(source, [
+      '@babel/plugin-transform-typescript',
+      Plugin,
+    ]);
+
+    expect(actual).toEqual(`Ember.addObserver();`);
+  });
+
+  it('works for non-null expression', () => {
+    let source = `
+      import { addObserver } from '@ember/object/observers';
+      addObserver!();
+   `;
+
+    let actual = transform7(source, [
+      '@babel/plugin-transform-typescript',
+      Plugin,
+    ]);
+
+    expect(actual).toEqual(`Ember.addObserver();`);
+  });
 });
