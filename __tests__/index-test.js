@@ -267,3 +267,27 @@ describe('when used with @babel/preset-env', () => {
     expect(actual).toEqual(`export default Ember.Application.extend({});`);
   });
 });
+
+describe('when used with typescript', () => {
+  // Example taken from Ember Data:
+  // https://github.com/emberjs/data/blob/70b0c55e1a950bed1da64d0ecb4eaa0d5df92f9f/packages/store/addon/-private/system/fetch-manager.ts#L124
+  // https://github.com/emberjs/data/blob/70b0c55e1a950bed1da64d0ecb4eaa0d5df92f9f/packages/store/addon/-private/system/fetch-manager.ts#L124
+  // https://github.com/emberjs/data/blob/70b0c55e1a950bed1da64d0ecb4eaa0d5df92f9f/packages/store/addon/-private/system/fetch-manager.ts#L77
+  it(`works when you use an import as both a type and as JS value`, () => {
+    let source = `
+    import { default as RSVP, Promise } from 'rsvp';
+    RSVP.Promise.resolve().then(() => {});
+    function scheduleSave(identifier: RecordIdentifier, options: any = {}): RSVP.Promise<null | SingleResourceDocument> {
+    }
+    `;
+
+    let actual = transform7(source, [
+      require('@babel/plugin-transform-typescript'),
+      Plugin,
+    ]);
+
+    expect(actual).toEqual(
+      `Ember.RSVP.Promise.resolve().then(() => {});\n\nfunction scheduleSave(identifier, options = {}) {}`
+    );
+  });
+});
