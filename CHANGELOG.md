@@ -1,3 +1,19 @@
+## v2.13.1 (2020-05-29)
+
+#### :bug: Bug Fix
+* [#109](https://github.com/ember-cli/babel-plugin-ember-modules-api-polyfill/pull/109) Ensure identifiers are properly re-written. ([@rwjblue](https://github.com/rwjblue))
+
+#### :house: Internal
+* [#107](https://github.com/ember-cli/babel-plugin-ember-modules-api-polyfill/pull/107) Add babel@7 test infrastructure. ([@rwjblue](https://github.com/rwjblue))
+* [#106](https://github.com/ember-cli/babel-plugin-ember-modules-api-polyfill/pull/106) Refactor tests from QUnit -> Jest ([@rwjblue](https://github.com/rwjblue))
+* [#104](https://github.com/ember-cli/babel-plugin-ember-modules-api-polyfill/pull/104) Update linting configuration ([@rwjblue](https://github.com/rwjblue))
+* [#103](https://github.com/ember-cli/babel-plugin-ember-modules-api-polyfill/pull/103) Replace qunit-eslint with eslint ([@rwjblue](https://github.com/rwjblue))
+* [#102](https://github.com/ember-cli/babel-plugin-ember-modules-api-polyfill/pull/102) Migrate to GH Actions CI. ([@rwjblue](https://github.com/rwjblue))
+
+#### Committers: 1
+- Robert Jackson ([@rwjblue](https://github.com/rwjblue))
+
+
 ## v2.13.0 (2020-05-19)
 
 #### :rocket: Enhancement
