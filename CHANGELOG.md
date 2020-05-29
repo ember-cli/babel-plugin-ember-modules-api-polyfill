@@ -1,3 +1,12 @@
+## v2.13.2 (2020-05-29)
+
+#### :bug: Bug Fix
+* [#110](https://github.com/ember-cli/babel-plugin-ember-modules-api-polyfill/pull/110) Avoid errors when replacing Ember modules imports that are used as both a type and a value ([@fivetanley](https://github.com/fivetanley))
+
+#### Committers: 1
+- Stanley Stuart ([@fivetanley](https://github.com/fivetanley))
+
+
 ## v2.13.1 (2020-05-29)
 
 #### :bug: Bug Fix
