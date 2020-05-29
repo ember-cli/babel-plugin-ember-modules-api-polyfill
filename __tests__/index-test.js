@@ -273,7 +273,7 @@ describe('when used with typescript', () => {
   // https://github.com/emberjs/data/blob/70b0c55e1a950bed1da64d0ecb4eaa0d5df92f9f/packages/store/addon/-private/system/fetch-manager.ts#L124
   // https://github.com/emberjs/data/blob/70b0c55e1a950bed1da64d0ecb4eaa0d5df92f9f/packages/store/addon/-private/system/fetch-manager.ts#L124
   // https://github.com/emberjs/data/blob/70b0c55e1a950bed1da64d0ecb4eaa0d5df92f9f/packages/store/addon/-private/system/fetch-manager.ts#L77
-  it(`works when you use an import as both a type and as JS value`, () => {
+  it(`works when you use an import as both a type and as a TSQualifiedName value`, () => {
     let source = `
     import { default as RSVP, Promise } from 'rsvp';
     RSVP.Promise.resolve().then(() => {});
@@ -289,5 +289,23 @@ describe('when used with typescript', () => {
     expect(actual).toEqual(
       `Ember.RSVP.Promise.resolve().then(() => {});\n\nfunction scheduleSave(identifier, options = {}) {}`
     );
+  });
+
+  it(`works when you use an import as both a type and a TSDeclareFunction`, () => {
+    let source = `
+      import { capabilities } from '@ember/component';
+
+      declare module '@ember/component' {
+        export function capabilities(
+        );
+      }
+   `;
+
+    let actual = transform7(source, [
+      require('@babel/plugin-transform-typescript'),
+      Plugin,
+    ]);
+
+    expect(actual).toEqual(``);
   });
 });
