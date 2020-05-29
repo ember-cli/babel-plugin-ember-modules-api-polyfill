@@ -16,6 +16,8 @@ function isBlacklisted(blacklist, importPath, exportName) {
 module.exports = function (babel) {
   const t = babel.types;
 
+  const isTypescriptNode = (node) => node.type.startsWith('TS');
+
   const GLOBALS_MAP = new Map();
 
   // Flips the ember-rfc176-data mapping into an 'import' indexed object, that exposes the
@@ -167,7 +169,9 @@ module.exports = function (babel) {
               let binding = path.scope.getBinding(local.name);
 
               binding.referencePaths.forEach((referencePath) => {
-                referencePath.replaceWith(getMemberExpressionFor(global));
+                if (!isTypescriptNode(referencePath.parentPath)) {
+                  referencePath.replaceWith(getMemberExpressionFor(global));
+                }
               });
             }
           });
