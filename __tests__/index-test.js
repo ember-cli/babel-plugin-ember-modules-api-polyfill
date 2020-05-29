@@ -23,6 +23,15 @@ function transform7(source, _plugins) {
   return result.code;
 }
 
+function transformWithPresetEnv(source) {
+  let result = babel7.transformSync(source, {
+    plugins: [[Plugin]],
+    presets: [['@babel/preset-env', { targets: { ie: '8' }, modules: false }]],
+  });
+
+  return result.code;
+}
+
 function matches(source, expected, only) {
   (only ? it.only : it)(`${source}`, () => {
     let actual = transform(source);
@@ -244,4 +253,17 @@ describe(`import from 'ember'`, () => {
 describe(`import without specifier is removed`, () => {
   matches(`import 'ember';`, ``);
   matches(`import '@ember/component';`, ``);
+});
+
+describe('when used with @babel/preset-env', () => {
+  it('generally works', () => {
+    let source = `
+      import Application from '@ember/application';
+
+      export default Application.extend({});
+    `;
+    let actual = transformWithPresetEnv(source);
+
+    expect(actual).toEqual(`export default Ember.Application.extend({});`);
+  });
 });

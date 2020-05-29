@@ -15,6 +15,9 @@ function isBlacklisted(blacklist, importPath, exportName) {
 
 module.exports = function (babel) {
   const t = babel.types;
+
+  const GLOBALS_MAP = new Map();
+
   // Flips the ember-rfc176-data mapping into an 'import' indexed object, that exposes the
   // default import as well as named imports, e.g. import {foo} from 'bar'
   const reverseMapping = {};
@@ -30,13 +33,40 @@ module.exports = function (babel) {
     reverseMapping[importRoot][importName] = imported;
   });
 
+  function getMemberExpressionFor(global) {
+    let memberExpression = GLOBALS_MAP.get(global);
+    if (memberExpression === undefined) {
+      let parts = global.split('.');
+
+      let object = parts.shift();
+      let property = parts.shift();
+
+      memberExpression = t.MemberExpression(
+        t.identifier(object),
+        t.identifier(property)
+      );
+
+      while (parts.length > 0) {
+        let property = parts.shift();
+
+        memberExpression = t.MemberExpression(
+          memberExpression,
+          t.identifier(property)
+        );
+      }
+
+      GLOBALS_MAP.set(global, memberExpression);
+    }
+
+    return memberExpression;
+  }
+
   return {
     name: 'ember-modules-api-polyfill',
     visitor: {
       ImportDeclaration(path, state) {
         let blacklist = (state.opts && state.opts.blacklist) || [];
         let node = path.node;
-        let replacements = [];
         let declarations = [];
         let removals = [];
         let specifiers = path.get('specifiers');
@@ -56,7 +86,7 @@ module.exports = function (babel) {
           if (specifierPath) {
             let local = specifierPath.node.local;
             if (local.name !== 'Ember') {
-              replacements.push([local.name, 'Ember']);
+              path.scope.rename(local.name, 'Ember');
             }
             removals.push(specifierPath);
           } else {
@@ -134,18 +164,16 @@ module.exports = function (babel) {
               );
             } else {
               // Replace the occurences of the imported name with the global name.
-              replacements.push([local.name, global]);
+              let binding = path.scope.getBinding(local.name);
+
+              binding.referencePaths.forEach((referencePath) => {
+                referencePath.replaceWith(getMemberExpressionFor(global));
+              });
             }
           });
         }
 
         if (removals.length > 0 || mapping) {
-          replacements.forEach((replacement) => {
-            let local = replacement[0];
-            let global = replacement[1];
-            path.scope.rename(local, global);
-          });
-
           if (removals.length === node.specifiers.length) {
             path.replaceWithMultiple(declarations);
           } else {
