@@ -16,7 +16,7 @@ function isBlacklisted(blacklist, importPath, exportName) {
 module.exports = function (babel) {
   const t = babel.types;
 
-  const isTypescriptNode = (node) => node.type.indexOf('TS') >= 0;
+  const isTypescriptNode = (node) => node.type.startsWith('TS');
 
   const GLOBALS_MAP = new Map();
 
