@@ -1,3 +1,12 @@
+## v2.13.4 (2020-06-02)
+
+#### :bug: Bug Fix
+* [#116](https://github.com/ember-cli/babel-plugin-ember-modules-api-polyfill/pull/116) Ensure generated global `MemberExpressions` are not shared ([@rwjblue](https://github.com/rwjblue))
+
+#### Committers: 1
+- Robert Jackson ([@rwjblue](https://github.com/rwjblue))
+
+
 ## v2.13.3 (2020-05-29)
 
 #### :bug: Bug Fix
