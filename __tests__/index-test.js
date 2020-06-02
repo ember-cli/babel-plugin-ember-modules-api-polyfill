@@ -266,6 +266,79 @@ describe('when used with @babel/preset-env', () => {
 
     expect(actual).toEqual(`export default Ember.Application.extend({});`);
   });
+
+  it('does not have issues with ember-google-maps style helper', () => {
+    let source = `
+import { computed, getProperties } from '@ember/object';
+import ObjectProxy from '@ember/object/proxy';
+import PromiseProxyMixin from '@ember/object/promise-proxy-mixin';
+
+let ObjectPromiseProxy = ObjectProxy.extend(PromiseProxyMixin);
+
+let position = computed('lat', 'lng', function() {
+  const { lat, lng } = getProperties(this, 'lat', 'lng');
+  return (lat && lng) ? new google.maps.LatLng(lat, lng) : undefined;
+});
+
+function position2() {
+  return computed('lat', 'lng', function() {
+    const { lat, lng } = getProperties(this, 'lat', 'lng');
+    return (lat && lng) ? new google.maps.LatLng(lat, lng) : undefined;
+  });
+}
+
+function computedPromise(...args) {
+  let func = args.pop();
+  return computed(...args, function() {
+    return ObjectPromiseProxy.create({
+      promise: func.apply(this)
+    });
+  });
+}
+
+export { computedPromise, position };
+`;
+
+    let actual = transformWithPresetEnv(source);
+
+    expect(actual).toEqual(
+      `var ObjectPromiseProxy = Ember.ObjectProxy.extend(Ember.PromiseProxyMixin);
+var position = Ember.computed('lat', 'lng', function () {
+  var _Ember$getProperties = Ember.getProperties(this, 'lat', 'lng'),
+      lat = _Ember$getProperties.lat,
+      lng = _Ember$getProperties.lng;
+
+  return lat && lng ? new google.maps.LatLng(lat, lng) : undefined;
+});
+
+function position2() {
+  return Ember.computed('lat', 'lng', function () {
+    var _Ember$getProperties2 = Ember.getProperties(this, 'lat', 'lng'),
+        lat = _Ember$getProperties2.lat,
+        lng = _Ember$getProperties2.lng;
+
+    return lat && lng ? new google.maps.LatLng(lat, lng) : undefined;
+  });
+}
+
+function computedPromise() {
+  var _Ember;
+
+  for (var _len = arguments.length, args = new Array(_len), _key = 0; _key < _len; _key++) {
+    args[_key] = arguments[_key];
+  }
+
+  var func = args.pop();
+  return (_Ember = Ember).computed.apply(_Ember, args.concat([function () {
+    return ObjectPromiseProxy.create({
+      promise: func.apply(this)
+    });
+  }]));
+}
+
+export { computedPromise, position };`
+    );
+  });
 });
 
 describe('when used with typescript', () => {
