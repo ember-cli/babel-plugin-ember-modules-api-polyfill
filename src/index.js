@@ -25,8 +25,6 @@ module.exports = function (babel) {
     node.type.startsWith('TS') &&
     !TSTypesRequiringModification.includes(node.type);
 
-  const GLOBALS_MAP = new Map();
-
   // Flips the ember-rfc176-data mapping into an 'import' indexed object, that exposes the
   // default import as well as named imports, e.g. import {foo} from 'bar'
   const reverseMapping = {};
@@ -43,28 +41,23 @@ module.exports = function (babel) {
   });
 
   function getMemberExpressionFor(global) {
-    let memberExpression = GLOBALS_MAP.get(global);
-    if (memberExpression === undefined) {
-      let parts = global.split('.');
+    let parts = global.split('.');
 
-      let object = parts.shift();
+    let object = parts.shift();
+    let property = parts.shift();
+
+    let memberExpression = t.MemberExpression(
+      t.identifier(object),
+      t.identifier(property)
+    );
+
+    while (parts.length > 0) {
       let property = parts.shift();
 
       memberExpression = t.MemberExpression(
-        t.identifier(object),
+        memberExpression,
         t.identifier(property)
       );
-
-      while (parts.length > 0) {
-        let property = parts.shift();
-
-        memberExpression = t.MemberExpression(
-          memberExpression,
-          t.identifier(property)
-        );
-      }
-
-      GLOBALS_MAP.set(global, memberExpression);
     }
 
     return memberExpression;
