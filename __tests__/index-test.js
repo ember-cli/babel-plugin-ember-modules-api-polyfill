@@ -179,7 +179,7 @@ describe(`ember-modules-api-polyfill-reexport`, () => {
 
 // Ensure unknown exports are not removed
 describe(`unknown imports from known module`, () => {
-  it(`allows blacklisting import paths`, () => {
+  it(`allows disallowing import paths`, () => {
     let input = `import { derp } from '@ember/object/computed';`;
 
     expect(() => {
@@ -210,22 +210,20 @@ export { capitalize };`
 });
 
 describe('options', () => {
-  describe('blacklist', () => {
-    it(`allows blacklisting import paths`, () => {
+  describe('ignore', () => {
+    it(`allows ignoring import paths`, () => {
       let input = `import { assert } from '@ember/debug';`;
-      let actual = transform(input, [
-        [Plugin, { blacklist: ['@ember/debug'] }],
-      ]);
+      let actual = transform(input, [[Plugin, { ignore: ['@ember/debug'] }]]);
 
       expect(actual).toEqual(input);
     });
 
-    it(`allows blacklisting specific named imports`, () => {
+    it(`allows ignoring specific named imports`, () => {
       let input = `import { assert, inspect } from '@ember/debug';var _x = inspect`;
       let actual = transform(input, [
         [
           Plugin,
-          { blacklist: { '@ember/debug': ['assert', 'warn', 'deprecate'] } },
+          { ignore: { '@ember/debug': ['assert', 'warn', 'deprecate'] } },
         ],
       ]);
 
@@ -234,9 +232,9 @@ describe('options', () => {
       );
     });
 
-    it('does not error when a blacklist is not present', () => {
+    it('does not error when ignore is not present', () => {
       let input = `import { assert, inspect } from '@ember/debug';var _x = assert; var _y = inspect;`;
-      let actual = transform(input, [[Plugin, { blacklist: {} }]]);
+      let actual = transform(input, [[Plugin, { ignore: {} }]]);
 
       expect(actual).toEqual(`var _x = Ember.assert;var _y = Ember.inspect;`);
     });

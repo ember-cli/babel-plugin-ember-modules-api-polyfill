@@ -3,13 +3,13 @@
 const path = require('path');
 const mapping = require('ember-rfc176-data');
 
-function isBlacklisted(blacklist, importPath, exportName) {
-  if (Array.isArray(blacklist)) {
-    return blacklist.indexOf(importPath) > -1;
+function isIgnored(ignore, importPath, exportName) {
+  if (Array.isArray(ignore)) {
+    return ignore.indexOf(importPath) > -1;
   } else {
-    let blacklistedExports = blacklist[importPath];
+    let ignoredExports = ignore[importPath];
 
-    return blacklistedExports && blacklistedExports.indexOf(exportName) > -1;
+    return ignoredExports && ignoredExports.indexOf(exportName) > -1;
   }
 }
 
@@ -67,7 +67,7 @@ module.exports = function (babel) {
     name: 'ember-modules-api-polyfill',
     visitor: {
       ImportDeclaration(path, state) {
-        let blacklist = (state.opts && state.opts.blacklist) || [];
+        let ignore = (state.opts && state.opts.ignore) || [];
         let node = path.node;
         let declarations = [];
         let removals = [];
@@ -134,7 +134,7 @@ module.exports = function (babel) {
               importName = imported.name;
             }
 
-            if (isBlacklisted(blacklist, importPath, importName)) {
+            if (isIgnored(ignore, importPath, importName)) {
               return;
             }
 
@@ -188,7 +188,7 @@ module.exports = function (babel) {
       },
 
       ExportNamedDeclaration(path, state) {
-        let blacklist = (state.opts && state.opts.blacklist) || [];
+        let ignore = (state.opts && state.opts.ignore) || [];
         let node = path.node;
         if (!node.source) {
           return;
@@ -224,7 +224,7 @@ module.exports = function (babel) {
             // Determine the import name, either default or named
             let importName = local.name;
 
-            if (isBlacklisted(blacklist, importPath, importName)) {
+            if (isIgnored(ignore, importPath, importName)) {
               return;
             }
 
