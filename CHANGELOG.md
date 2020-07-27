@@ -1,3 +1,12 @@
+## v3.0.0 (2020-07-27)
+
+#### :boom: Breaking Change
+* [#117](https://github.com/ember-cli/babel-plugin-ember-modules-api-polyfill/pull/117) Rename `blacklist` option to `ignore` ([@mydea](https://github.com/mydea))
+
+#### Committers: 1
+- Francesco Novy ([@mydea](https://github.com/mydea))
+
+
 ## v2.13.4 (2020-06-02)
 
 #### :bug: Bug Fix
