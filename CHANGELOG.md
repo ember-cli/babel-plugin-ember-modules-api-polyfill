@@ -1,3 +1,12 @@
+## v3.1.0 (2020-07-31)
+
+#### :rocket: Enhancement
+* [#125](https://github.com/ember-cli/babel-plugin-ember-modules-api-polyfill/pull/125) Update ember-rfc176-data to add @ember/destroyable API ([@rwjblue](https://github.com/rwjblue))
+
+#### Committers: 1
+- Robert Jackson ([@rwjblue](https://github.com/rwjblue))
+
+
 ## v3.0.0 (2020-07-27)
 
 #### :boom: Breaking Change
