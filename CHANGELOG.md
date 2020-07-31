@@ -1,3 +1,9 @@
+## v3.1.1 (2020-07-31)
+
+### :bug: Bug fix
+  * Update `ember-rfc176-data` to ensure `destroy` is provided by `@ember/destroyable`
+
+
 ## v3.1.0 (2020-07-31)
 
 #### :rocket: Enhancement
