@@ -28,7 +28,7 @@
     "test": "jest"
   },
   "dependencies": {
-    "ember-rfc176-data": "^0.3.13"
+    "ember-rfc176-data": "^0.3.14"
   },
   "devDependencies": {
     "@babel/core": "^7.10.4",

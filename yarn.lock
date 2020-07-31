@@ -2391,10 +2391,10 @@ electron-to-chromium@^1.3.413:
   resolved "https://registry.yarnpkg.com/electron-to-chromium/-/electron-to-chromium-1.3.453.tgz#758a8565a64b7889b27132a51d2abb8b135c9d01"
   integrity sha512-IQbCfjJR0NDDn/+vojTlq7fPSREcALtF8M1n01gw7nQghCtfFYrJ2dfhsp8APr8bANoFC8vRTFVXMOGpT0eetw==
 
-ember-rfc176-data@^0.3.13:
-  version "0.3.13"
-  resolved "https://registry.yarnpkg.com/ember-rfc176-data/-/ember-rfc176-data-0.3.13.tgz#ed1712a26e65fec703655f35410414aa1982cf3b"
-  integrity sha512-m9JbwQlT6PjY7x/T8HslnXP7Sz9bx/pz3FrNfNi2NesJnbNISly0Lix6NV1fhfo46572cpq4jrM+/6yYlMefTQ==
+ember-rfc176-data@^0.3.14:
+  version "0.3.14"
+  resolved "https://registry.yarnpkg.com/ember-rfc176-data/-/ember-rfc176-data-0.3.14.tgz#308808aa4bfdb655e6c3624fbe774699906c59ed"
+  integrity sha512-C4so9WmmDpRiAZYEzmFwgOSGyFCOL53vKkDuC3YXmbHF+fwDgBl18wt/N6D6pgHF9xXjt+WjHX0QTQzg3tOCyw==
 
 emoji-regex@^7.0.1:
   version "7.0.3"
