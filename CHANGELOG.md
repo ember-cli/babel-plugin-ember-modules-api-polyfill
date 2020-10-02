@@ -1,3 +1,12 @@
+## v3.2.0 (2020-10-02)
+
+#### :rocket: Enhancement
+* [#141](https://github.com/ember-cli/babel-plugin-ember-modules-api-polyfill/pull/141) Update ember-rfc176-data to add Helper Manager APIs. ([@rwjblue](https://github.com/rwjblue))
+
+#### Committers: 1
+- Robert Jackson ([@rwjblue](https://github.com/rwjblue))
+
+
 ## v3.1.1 (2020-07-31)
 
 ### :bug: Bug fix
