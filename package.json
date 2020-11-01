@@ -31,7 +31,7 @@
     "ember-rfc176-data": "^0.3.16"
   },
   "devDependencies": {
-    "@babel/core": "^7.11.6",
+    "@babel/core": "^7.12.3",
     "@babel/plugin-transform-typescript": "^7.11.0",
     "@babel/preset-env": "^7.11.5",
     "babel-core": "^6.25.0",
