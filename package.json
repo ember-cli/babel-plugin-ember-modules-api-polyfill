@@ -36,7 +36,7 @@
     "@babel/preset-env": "^7.11.5",
     "babel-core": "^6.25.0",
     "eslint": "^7.10.0",
-    "eslint-config-prettier": "^6.12.0",
+    "eslint-config-prettier": "^6.15.0",
     "eslint-plugin-node": "^11.1.0",
     "eslint-plugin-prettier": "^3.1.4",
     "jest": "^24.9.0",
