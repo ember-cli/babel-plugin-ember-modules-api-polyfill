@@ -424,10 +424,22 @@ describe('when used with typescript', () => {
 });
 
 describe('when used with babel-plugin-istanbul', () => {
-  it('throws an exception', () => {
+  // babel-plugin-istanbul won't run on <= Node 6
+  const majorVersion = parseInt(process.version.match(/^v(\d+)\./)[1], 10);
+  const runOrSkip = majorVersion > 6 ? it : it.skip;
+
+  runOrSkip('throws an exception', () => {
+    let source = `
+      import EmberObject from '@ember/object';
+      import Evented from '@ember/object/evented';
+
+      export default class TestObject extends EmberObject.extend(Evented) {};
+    `;
+
     expect(() => {
-      babel7.transformFileSync('./fixtures/istanbul-should-cover.js', {
-        plugins: [[require('babel-plugin-istanbul')], Plugin],
+      babel7.transformSync(source, {
+        filename: 'istanbul-should-cover.js',
+        plugins: [require('babel-plugin-istanbul'), Plugin],
       });
     }).toThrow(/Container is falsy/i);
   });
