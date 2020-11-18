@@ -22,5 +22,11 @@ module.exports = {
         jest: true,
       },
     },
+    {
+      files: ['fixtures/**/*.js'],
+      parserOptions: {
+        sourceType: 'module',
+      },
+    },
   ],
 };

@@ -422,3 +422,13 @@ describe('when used with typescript', () => {
     expect(actual).toEqual(`Ember.addObserver();`);
   });
 });
+
+describe('when used with babel-plugin-istanbul', () => {
+  it('throws an exception', () => {
+    expect(() => {
+      babel7.transformFileSync('./fixtures/istanbul-should-cover.js', {
+        plugins: [[require('babel-plugin-istanbul')], Plugin],
+      });
+    }).toThrow(/Container is falsy/i);
+  });
+});
