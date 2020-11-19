@@ -165,6 +165,8 @@ module.exports = function (babel) {
                 ])
               );
             } else {
+              path.scope.crawl();
+
               // Replace the occurences of the imported name with the global name.
               let binding = path.scope.getBinding(local.name);
 
