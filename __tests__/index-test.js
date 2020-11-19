@@ -433,14 +433,21 @@ describe('when used with babel-plugin-istanbul', () => {
       import EmberObject from '@ember/object';
       import Evented from '@ember/object/evented';
 
-      export default class TestObject extends EmberObject.extend(Evented) {};
+      const TestObject = EmberObject.extend(Evented);
+      export default TestObject;
     `;
 
-    expect(() => {
-      babel7.transformSync(source, {
+    let actual;
+
+    try {
+      actual = babel7.transformSync(source, {
         filename: 'istanbul-should-cover.js',
         plugins: [require('babel-plugin-istanbul'), Plugin],
-      });
-    }).toThrow(/Container is falsy/i);
+      }).code;
+    } catch (e) {
+      actual = e;
+    }
+
+    expect(actual).toMatchInlineSnapshot();
   });
 });
