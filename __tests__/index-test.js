@@ -428,7 +428,7 @@ describe('when used with babel-plugin-istanbul', () => {
   const majorVersion = parseInt(process.version.match(/^v(\d+)\./)[1], 10);
   const runOrSkip = majorVersion > 6 ? it : it.skip;
 
-  runOrSkip('throws an exception', () => {
+  runOrSkip('works with mixins', () => {
     let source = `
       import EmberObject from '@ember/object';
       import Evented from '@ember/object/evented';
@@ -437,17 +437,29 @@ describe('when used with babel-plugin-istanbul', () => {
       export default TestObject;
     `;
 
-    let actual;
+    let actual = babel7.transformSync(source, {
+      filename: 'istanbul-should-cover.js',
+      plugins: [require('babel-plugin-istanbul'), Plugin],
+    }).code;
 
-    try {
-      actual = babel7.transformSync(source, {
-        filename: 'istanbul-should-cover.js',
-        plugins: [require('babel-plugin-istanbul'), Plugin],
-      }).code;
-    } catch (e) {
-      actual = e;
-    }
+    expect(actual).toContain('Ember.Object.extend(Ember.Evented)');
+  });
 
-    expect(actual).toMatchInlineSnapshot();
+  runOrSkip('works with classes that extend from mixins', () => {
+    let source = `
+      import EmberObject from '@ember/object';
+      import Evented from '@ember/object/evented';
+
+      export default class TestObject extends EmberObject.extend(Evented) {};
+    `;
+
+    let actual = babel7.transformSync(source, {
+      filename: 'istanbul-should-cover.js',
+      plugins: [require('babel-plugin-istanbul'), Plugin],
+    }).code;
+
+    expect(actual).toContain(
+      'export default class TestObject extends (Ember.Object.extend(Ember.Evented)) {}'
+    );
   });
 });
