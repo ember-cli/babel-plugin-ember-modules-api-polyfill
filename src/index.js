@@ -13,6 +13,24 @@ function isIgnored(ignore, importPath, exportName) {
   }
 }
 
+function isDecorator(moduleName, importName) {
+  switch (moduleName) {
+    case '@ember/service':
+      return importName === 'inject';
+    case '@ember/controller':
+      return importName === 'inject';
+    case '@glimmer/tracking':
+      return importName === 'tracked';
+    case '@ember/object/compat':
+      return importName === 'dependentKeyCompat';
+    case '@ember/object':
+      return ['action', 'computed'].includes(importName);
+    case '@ember/object/computed':
+      // only the default import of this module is not a decorator
+      return importName !== 'default';
+  }
+}
+
 module.exports = function (babel) {
   const t = babel.types;
 
@@ -165,10 +183,36 @@ module.exports = function (babel) {
                 ])
               );
             } else {
-              // Replace the occurences of the imported name with the global name.
               let binding = path.scope.getBinding(local.name);
+              let referencePaths = binding.referencePaths;
 
-              binding.referencePaths.forEach((referencePath) => {
+              if (isDecorator(importPath, importName)) {
+                // tldr; decorator paths are not always included in `path.scope.getBinding(local.name)`
+                //
+                // In some circumstances, decorators are not included in the
+                // reference paths for a local binding when the decorator
+                // identifier name is also defined _within_ the method being
+                // decorated. This is likely a bug in Babel, that should be
+                // reported and fixed.
+                //
+                // in order to fix that, we have to manually traverse to gather
+                // the decorator references **before** the
+                // @babel/plugin-proposal-decorators runs (because it removes
+                // them)
+                path.parentPath.traverse({
+                  Decorator(decoratorPath) {
+                    if (
+                      decoratorPath.node.expression.type === 'Identifier' &&
+                      decoratorPath.node.expression.name === local.name
+                    ) {
+                      referencePaths.push(decoratorPath.get('expression'));
+                    }
+                  },
+                });
+              }
+
+              // Replace the occurences of the imported name with the global name.
+              referencePaths.forEach((referencePath) => {
                 if (!isTypescriptNode(referencePath.parentPath)) {
                   referencePath.replaceWith(getMemberExpressionFor(global));
                 }
