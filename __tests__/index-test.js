@@ -444,16 +444,16 @@ export default class MyController extends Controller {
       ['@babel/plugin-proposal-decorators', { legacy: true }],
     ]);
 
-    expect(actual)
-      .toEqual(`var _class;
+    expect(actual).toEqual(`var _dec, _class;
 
 function _applyDecoratedDescriptor(target, property, decorators, descriptor, context) { var desc = {}; Object.keys(descriptor).forEach(function (key) { desc[key] = descriptor[key]; }); desc.enumerable = !!desc.enumerable; desc.configurable = !!desc.configurable; if ('value' in desc || desc.initializer) { desc.writable = true; } desc = decorators.slice().reverse().reduce(function (desc, decorator) { return decorator(target, property, desc) || desc; }, desc); if (context && desc.initializer !== void 0) { desc.value = desc.initializer ? desc.initializer.call(context) : void 0; desc.initializer = undefined; } if (desc.initializer === void 0) { Object.defineProperty(target, property, desc); desc = null; } return desc; }
 
-let MyController = (_class = class MyController extends Ember.Controller {
+let MyController = (_dec = Ember._action, (_class = class MyController extends Ember.Controller {
   addAction(action) {
     this.actions.pushObject(action);
   }
-}, (_applyDecoratedDescriptor(_class.prototype, "addAction", [Ember._action], Object.getOwnPropertyDescriptor(_class.prototype, "addAction"), _class.prototype)), _class);
+
+}, (_applyDecoratedDescriptor(_class.prototype, "addAction", [_dec], Object.getOwnPropertyDescriptor(_class.prototype, "addAction"), _class.prototype)), _class));
 export { MyController as default };`);
   });
 });
