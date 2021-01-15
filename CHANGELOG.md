@@ -1,3 +1,19 @@
+## v3.2.1 (2021-01-15)
+
+#### :bug: Bug Fix
+* [#170](https://github.com/ember-cli/babel-plugin-ember-modules-api-polyfill/pull/170) Ensure decorators are transpiled properly when the decorator identifier is aliased within the decorated method ([@dwickern](https://github.com/dwickern))
+
+#### :house: Internal
+* [#172](https://github.com/ember-cli/babel-plugin-ember-modules-api-polyfill/pull/172) Update eslint related packages. ([@rwjblue](https://github.com/rwjblue))
+* [#171](https://github.com/ember-cli/babel-plugin-ember-modules-api-polyfill/pull/171) Update release automation setup. ([@rwjblue](https://github.com/rwjblue))
+* [#171](https://github.com/ember-cli/babel-plugin-ember-modules-api-polyfill/pull/171) Update release automation setup. ([@rwjblue](https://github.com/rwjblue))
+
+#### Committers: 3
+- Derek Wickern ([@dwickern](https://github.com/dwickern))
+- Robert Jackson ([@rwjblue](https://github.com/rwjblue))
+- [@dependabot-preview[bot]](https://github.com/apps/dependabot-preview)
+
+
 ## v3.2.0 (2020-10-02)
 
 #### :rocket: Enhancement
