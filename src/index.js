@@ -31,6 +31,16 @@ function isDecorator(moduleName, importName) {
   }
 }
 
+// what are the odds someone else defines this?
+const EmberGlobalImportName = '____EMBER_GLOBAL____';
+
+function emberImport(t) {
+  return t.importDeclaration(
+    [t.importDefaultSpecifier(t.identifier(EmberGlobalImportName))],
+    t.stringLiteral('ember')
+  );
+}
+
 module.exports = function (babel) {
   const t = babel.types;
 
@@ -84,8 +94,25 @@ module.exports = function (babel) {
   return {
     name: 'ember-modules-api-polyfill',
     visitor: {
+      Program(path, state) {
+        let options = state.opts || {};
+        let useEmberModule = options.useEmberModule || false;
+
+        if (!useEmberModule) return;
+
+        let hasEmberImport = path
+          .get('body')
+          .filter((n) => n.type === 'ImportDeclaration')
+          .find((n) => n.get('source').get('value').node === 'ember');
+
+        if (!hasEmberImport) {
+          path.unshiftContainer('body', emberImport(t));
+        }
+      },
       ImportDeclaration(path, state) {
-        let ignore = (state.opts && state.opts.ignore) || [];
+        let options = state.opts || {};
+        let ignore = options.ignore || [];
+        let useEmberModule = options.useEmberModule || false;
         let node = path.node;
         let declarations = [];
         let removals = [];
@@ -105,10 +132,17 @@ module.exports = function (babel) {
 
           if (specifierPath) {
             let local = specifierPath.node.local;
-            if (local.name !== 'Ember') {
-              path.scope.rename(local.name, 'Ember');
+
+            if (useEmberModule) {
+              if (local.name === 'Ember') {
+                path.scope.rename(EmberGlobalImportName);
+              }
+            } else {
+              if (local.name !== 'Ember') {
+                path.scope.rename(local.name, 'Ember');
+              }
+              removals.push(specifierPath);
             }
-            removals.push(specifierPath);
           } else {
             // import 'ember';
             path.remove();
@@ -339,3 +373,5 @@ module.exports = function (babel) {
 // Provide the path to the package's base directory for caching with broccoli
 // Ref: https://github.com/babel/broccoli-babel-transpiler#caching
 module.exports.baseDir = () => path.resolve(__dirname, '..');
+
+module.exports.uniqueishGlobalName = EmberGlobalImportName;

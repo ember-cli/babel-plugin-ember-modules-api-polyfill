@@ -241,6 +241,37 @@ describe('options', () => {
       expect(actual).toEqual(`var _x = Ember.assert;var _y = Ember.inspect;`);
     });
   });
+
+  describe('useEmberModule', () => {
+    it(`adds the ember import when used in sub-modules`, () => {
+      let input = `import Component from '@ember/component';export default class extends Component {}`;
+      let actual = transform(input, [[Plugin, { useEmberModule: true }]]);
+      let expected = `import ${Plugin.uniqueishGlobalName} from 'ember';\nexport default class extends Ember.Component {}`;
+
+      expect(actual).toEqual(expected);
+    });
+
+    it(`keeps the ember import`, () => {
+      let input = `import Ember from 'ember';let x = Ember;`;
+      let actual = transform(input, [[Plugin, { useEmberModule: true }]]);
+
+      expect(actual).toEqual(input);
+    });
+
+    it(`keeps the ember import when renamed`, () => {
+      let input = `import BestFramework from 'ember';let x = BestFramework;`;
+      let actual = transform(input, [[Plugin, { useEmberModule: true }]]);
+
+      expect(actual).toEqual(input);
+    });
+
+    it(`import then export`, () => {
+      let input = `import mbr from 'ember';export const Ember = mbr;`;
+      let actual = transform(input, [[Plugin, { useEmberModule: true }]]);
+
+      expect(actual).toEqual(input);
+    });
+  });
 });
 
 describe(`import from 'ember'`, () => {
