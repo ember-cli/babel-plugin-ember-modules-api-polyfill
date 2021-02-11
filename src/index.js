@@ -183,8 +183,6 @@ module.exports = function (babel) {
                 ])
               );
             } else {
-              path.scope.crawl();
-
               // Replace the occurences of the imported name with the global name.
               let binding = path.scope.getBinding(local.name);
               let referencePaths = binding.referencePaths;
@@ -214,10 +212,17 @@ module.exports = function (babel) {
                 });
               }
 
-              // Replace the occurences of the imported name with the global name.
+              // Replace the occurrences of the imported name with the global name.
               referencePaths.forEach((referencePath) => {
                 if (!isTypescriptNode(referencePath.parentPath)) {
-                  referencePath.replaceWith(getMemberExpressionFor(global));
+                  const memberExpression = getMemberExpressionFor(global);
+
+                  try {
+                    referencePath.replaceWith(memberExpression);
+                  } catch (e) {
+                    referencePath.scope.crawl();
+                    referencePath.replaceWith(memberExpression);
+                  }
                 }
               });
             }
