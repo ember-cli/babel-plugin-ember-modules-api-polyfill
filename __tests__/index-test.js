@@ -23,9 +23,11 @@ function transform7(source, _plugins) {
   return result.code;
 }
 
-function transformWithPresetEnv(source) {
+function transformWithPresetEnv(source, _plugins) {
+  let plugins = [].concat([[Plugin]], _plugins || []);
   let result = babel7.transformSync(source, {
-    plugins: [[Plugin]],
+    plugins,
+
     presets: [['@babel/preset-env', { targets: { ie: '8' }, modules: false }]],
   });
 
@@ -420,6 +422,39 @@ describe('when used with typescript', () => {
     ]);
 
     expect(actual).toEqual(`Ember.addObserver();`);
+  });
+});
+
+describe('when used with native classes and decorators', () => {
+  it('allows "action" to be used as a variable name', () => {
+    let source = `
+import { action } from '@ember/object';
+import Controller from '@ember/controller';
+
+export default class MyController extends Controller {
+  @action
+  addAction(action) {
+    this.actions.pushObject(action);
+  }
+}
+`;
+
+    let actual = transform7(source, [
+      [Plugin],
+      ['@babel/plugin-proposal-decorators', { legacy: true }],
+    ]);
+
+    expect(actual).toEqual(`var _dec, _class;
+
+function _applyDecoratedDescriptor(target, property, decorators, descriptor, context) { var desc = {}; Object.keys(descriptor).forEach(function (key) { desc[key] = descriptor[key]; }); desc.enumerable = !!desc.enumerable; desc.configurable = !!desc.configurable; if ('value' in desc || desc.initializer) { desc.writable = true; } desc = decorators.slice().reverse().reduce(function (desc, decorator) { return decorator(target, property, desc) || desc; }, desc); if (context && desc.initializer !== void 0) { desc.value = desc.initializer ? desc.initializer.call(context) : void 0; desc.initializer = undefined; } if (desc.initializer === void 0) { Object.defineProperty(target, property, desc); desc = null; } return desc; }
+
+let MyController = (_dec = Ember._action, (_class = class MyController extends Ember.Controller {
+  addAction(action) {
+    this.actions.pushObject(action);
+  }
+
+}, (_applyDecoratedDescriptor(_class.prototype, "addAction", [_dec], Object.getOwnPropertyDescriptor(_class.prototype, "addAction"), _class.prototype)), _class));
+export { MyController as default };`);
   });
 });
 
