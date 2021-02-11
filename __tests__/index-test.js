@@ -457,3 +457,44 @@ let MyController = (_dec = Ember._action, (_class = class MyController extends E
 export { MyController as default };`);
   });
 });
+
+describe('when used with babel-plugin-istanbul', () => {
+  // babel-plugin-istanbul won't run on <= Node 6
+  const majorVersion = parseInt(process.version.match(/^v(\d+)\./)[1], 10);
+  const runOrSkip = majorVersion > 6 ? it : it.skip;
+
+  runOrSkip('works with mixins', () => {
+    let source = `
+      import EmberObject from '@ember/object';
+      import Evented from '@ember/object/evented';
+
+      const TestObject = EmberObject.extend(Evented);
+      export default TestObject;
+    `;
+
+    let actual = babel7.transformSync(source, {
+      filename: 'istanbul-should-cover.js',
+      plugins: [require('babel-plugin-istanbul'), Plugin],
+    }).code;
+
+    expect(actual).toContain('Ember.Object.extend(Ember.Evented)');
+  });
+
+  runOrSkip('works with classes that extend from mixins', () => {
+    let source = `
+      import EmberObject from '@ember/object';
+      import Evented from '@ember/object/evented';
+
+      export default class TestObject extends EmberObject.extend(Evented) {};
+    `;
+
+    let actual = babel7.transformSync(source, {
+      filename: 'istanbul-should-cover.js',
+      plugins: [require('babel-plugin-istanbul'), Plugin],
+    }).code;
+
+    expect(actual).toContain(
+      'export default class TestObject extends (Ember.Object.extend(Ember.Evented)) {}'
+    );
+  });
+});
