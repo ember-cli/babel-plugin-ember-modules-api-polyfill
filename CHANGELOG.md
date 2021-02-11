@@ -1,3 +1,12 @@
+## v3.2.2 (2021-02-11)
+
+#### :bug: Bug Fix
+* [#156](https://github.com/ember-cli/babel-plugin-ember-modules-api-polyfill/pull/156) Fix "container is falsey" error when using code coverage ([@mdeanjones](https://github.com/mdeanjones))
+
+#### Committers: 1
+- Michael Jones ([@mdeanjones](https://github.com/mdeanjones))
+
+
 ## v3.2.1 (2021-01-15)
 
 #### :bug: Bug Fix
