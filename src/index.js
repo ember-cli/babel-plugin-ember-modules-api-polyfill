@@ -31,16 +31,6 @@ function isDecorator(moduleName, importName) {
   }
 }
 
-// what are the odds someone else defines this?
-const EmberGlobalImportName = '____EMBER_GLOBAL____';
-
-function emberImport(t) {
-  return t.importDeclaration(
-    [t.importDefaultSpecifier(t.identifier(EmberGlobalImportName))],
-    t.stringLiteral('ember')
-  );
-}
-
 module.exports = function (babel) {
   const t = babel.types;
 
@@ -68,14 +58,17 @@ module.exports = function (babel) {
     reverseMapping[importRoot][importName] = imported;
   });
 
-  function getMemberExpressionFor(global) {
+  function getMemberExpressionFor(global, emberIdentifier) {
     let parts = global.split('.');
 
     let object = parts.shift();
     let property = parts.shift();
 
+    let objectIdentifier =
+      object === 'Ember' ? emberIdentifier : t.identifier(object);
+
     let memberExpression = t.MemberExpression(
-      t.identifier(object),
+      objectIdentifier,
       t.identifier(property)
     );
 
@@ -96,23 +89,47 @@ module.exports = function (babel) {
     visitor: {
       Program(path, state) {
         let options = state.opts || {};
-        let useEmberModule = options.useEmberModule || false;
+        let useEmberModule = Boolean(options.useEmberModule);
 
-        if (!useEmberModule) return;
-
-        let hasEmberImport = path
+        let preexistingEmberImportDeclaration = path
           .get('body')
           .filter((n) => n.type === 'ImportDeclaration')
           .find((n) => n.get('source').get('value').node === 'ember');
 
-        if (!hasEmberImport) {
-          path.unshiftContainer('body', emberImport(t));
+        if (
+          // an import was found
+          preexistingEmberImportDeclaration &&
+          // this accounts for `import from 'ember'` without a local identifier
+          preexistingEmberImportDeclaration.node.specifiers.length > 0
+        ) {
+          state.emberIdentifier =
+            preexistingEmberImportDeclaration.node.specifiers[0].local;
         }
+
+        state.ensureEmberImport = () => {
+          if (!useEmberModule) {
+            // ensures that we can always assume `state.emberIdentifier` is set
+            state.emberIdentifier = t.identifier('Ember');
+            return;
+          }
+
+          if (state.emberIdentifier) return;
+
+          state.emberIdentifier = path.scope.generateUidIdentifier('Ember');
+
+          let emberImport = t.importDeclaration(
+            [t.importDefaultSpecifier(state.emberIdentifier)],
+            t.stringLiteral('ember')
+          );
+
+          path.unshiftContainer('body', emberImport);
+        };
       },
+
       ImportDeclaration(path, state) {
         let options = state.opts || {};
         let ignore = options.ignore || [];
-        let useEmberModule = options.useEmberModule || false;
+        let useEmberModule = Boolean(options.useEmberModule);
         let node = path.node;
         let declarations = [];
         let removals = [];
@@ -133,11 +150,8 @@ module.exports = function (babel) {
           if (specifierPath) {
             let local = specifierPath.node.local;
 
-            if (useEmberModule) {
-              if (local.name === 'Ember') {
-                path.scope.rename(EmberGlobalImportName);
-              }
-            } else {
+            // when `useEmberModule` is set, we don't need to do anything here
+            if (!useEmberModule) {
               if (local.name !== 'Ember') {
                 path.scope.rename(local.name, 'Ember');
               }
@@ -202,12 +216,15 @@ module.exports = function (babel) {
 
             removals.push(specifierPath);
 
+            // ensure that the Ember global is imported if needed
+            state.ensureEmberImport();
+
             if (
               path.scope.bindings[local.name].referencePaths.find(
                 (rp) => rp.parent.type === 'ExportSpecifier'
               )
             ) {
-              // not safe to use path.scope.rename directly
+              // not safe to use path.scope.rename directly when this identifier is being directly re-exported
               declarations.push(
                 t.variableDeclaration('var', [
                   t.variableDeclarator(
@@ -249,7 +266,10 @@ module.exports = function (babel) {
               // Replace the occurrences of the imported name with the global name.
               referencePaths.forEach((referencePath) => {
                 if (!isTypescriptNode(referencePath.parentPath)) {
-                  const memberExpression = getMemberExpressionFor(global);
+                  const memberExpression = getMemberExpressionFor(
+                    global,
+                    state.emberIdentifier
+                  );
 
                   try {
                     referencePath.replaceWith(memberExpression);
@@ -373,5 +393,3 @@ module.exports = function (babel) {
 // Provide the path to the package's base directory for caching with broccoli
 // Ref: https://github.com/babel/broccoli-babel-transpiler#caching
 module.exports.baseDir = () => path.resolve(__dirname, '..');
-
-module.exports.uniqueishGlobalName = EmberGlobalImportName;
