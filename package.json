@@ -1,6 +1,6 @@
 {
   "name": "babel-plugin-ember-modules-api-polyfill",
-  "version": "3.2.2",
+  "version": "3.3.0",
   "description": "Polyfill for Ember JS API.",
   "keywords": [
     "babel-plugin"

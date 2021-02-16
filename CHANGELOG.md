@@ -1,3 +1,12 @@
+## v3.3.0 (2021-02-16)
+
+#### :rocket: Enhancement
+* [#175](https://github.com/ember-cli/babel-plugin-ember-modules-api-polyfill/pull/175) Add `useEmberModule` option to force `ember` module usage (to avoid global `window.Ember` deprecation on Ember 3.27+). ([@NullVoxPopuli](https://github.com/NullVoxPopuli))
+
+#### Committers: 1
+- [@NullVoxPopuli](https://github.com/NullVoxPopuli)
+
+
 ## v3.2.2 (2021-02-11)
 
 #### :bug: Bug Fix
