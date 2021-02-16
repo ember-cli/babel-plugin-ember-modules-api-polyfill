@@ -241,6 +241,52 @@ describe('options', () => {
       expect(actual).toEqual(`var _x = Ember.assert;var _y = Ember.inspect;`);
     });
   });
+
+  describe('useEmberModule', () => {
+    it('does not add Ember import when no Ember related imports are needed', () => {
+      let input = `console.log('hi mom!');`;
+      let actual = transform(input, [[Plugin, { useEmberModule: true }]]);
+
+      expect(actual).toEqual(input);
+    });
+
+    it(`adds the ember import when used in sub-modules`, () => {
+      let input = `import Component from '@ember/component';export default class extends Component {}`;
+      let actual = transform(input, [[Plugin, { useEmberModule: true }]]);
+      let expected = `import _Ember from 'ember';\nexport default class extends _Ember.Component {}`;
+
+      expect(actual).toEqual(expected);
+    });
+
+    it(`keeps the ember import`, () => {
+      let input = `import Ember from 'ember';let x = Ember;`;
+      let actual = transform(input, [[Plugin, { useEmberModule: true }]]);
+
+      expect(actual).toEqual(input);
+    });
+
+    it(`reuses a pre-existing ember import`, () => {
+      let input = `import Ember from 'ember'; import Component from '@ember/component'; export default class extends Component {}`;
+      let actual = transform(input, [[Plugin, { useEmberModule: true }]]);
+      let expected = `import Ember from 'ember';export default class extends Ember.Component {}`;
+
+      expect(actual).toEqual(expected);
+    });
+
+    it(`keeps the ember import when renamed`, () => {
+      let input = `import BestFramework from 'ember';let x = BestFramework;`;
+      let actual = transform(input, [[Plugin, { useEmberModule: true }]]);
+
+      expect(actual).toEqual(input);
+    });
+
+    it(`import then export`, () => {
+      let input = `import mbr from 'ember';export const Ember = mbr;`;
+      let actual = transform(input, [[Plugin, { useEmberModule: true }]]);
+
+      expect(actual).toEqual(input);
+    });
+  });
 });
 
 describe(`import from 'ember'`, () => {
