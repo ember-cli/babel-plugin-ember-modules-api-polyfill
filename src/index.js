@@ -90,39 +90,64 @@ module.exports = function (babel) {
       Program(path, state) {
         let options = state.opts || {};
         let useEmberModule = Boolean(options.useEmberModule);
+        let allAddedImports = {};
 
-        let preexistingEmberImportDeclaration = path
-          .get('body')
-          .filter((n) => n.type === 'ImportDeclaration')
-          .find((n) => n.get('source').get('value').node === 'ember');
+        state.ensureImport = (exportName, moduleName) => {
+          let addedImports = (allAddedImports[moduleName] =
+            allAddedImports[moduleName] || {});
 
-        if (
-          // an import was found
-          preexistingEmberImportDeclaration &&
-          // this accounts for `import from 'ember'` without a local identifier
-          preexistingEmberImportDeclaration.node.specifiers.length > 0
-        ) {
-          state.emberIdentifier =
-            preexistingEmberImportDeclaration.node.specifiers[0].local;
-        }
+          if (addedImports[exportName]) return addedImports[exportName];
 
-        state.ensureEmberImport = () => {
-          if (!useEmberModule) {
-            // ensures that we can always assume `state.emberIdentifier` is set
-            state.emberIdentifier = t.identifier('Ember');
-            return;
+          if (
+            exportName === 'default' &&
+            moduleName === 'ember' &&
+            !useEmberModule
+          ) {
+            addedImports[exportName] = t.identifier('Ember');
+            return addedImports[exportName];
           }
 
-          if (state.emberIdentifier) return;
+          let importDeclarations = path
+            .get('body')
+            .filter((n) => n.type === 'ImportDeclaration');
 
-          state.emberIdentifier = path.scope.generateUidIdentifier('Ember');
-
-          let emberImport = t.importDeclaration(
-            [t.importDefaultSpecifier(state.emberIdentifier)],
-            t.stringLiteral('ember')
+          let preexistingImportDeclaration = importDeclarations.find(
+            (n) => n.get('source').get('value').node === moduleName
           );
 
-          path.unshiftContainer('body', emberImport);
+          if (preexistingImportDeclaration) {
+            let importSpecifier = preexistingImportDeclaration
+              .get('specifiers')
+              .find(({ node }) => {
+                return exportName === 'default'
+                  ? t.isImportDefaultSpecifier(node)
+                  : node.imported.name === exportName;
+              });
+
+            if (importSpecifier) {
+              addedImports[exportName] = importSpecifier.node.local;
+            }
+          }
+
+          if (!addedImports[exportName]) {
+            let uid = path.scope.generateUidIdentifier(
+              exportName === 'default' ? moduleName : exportName
+            );
+            addedImports[exportName] = uid;
+
+            let newImportSpecifier =
+              exportName === 'default'
+                ? t.importDefaultSpecifier(uid)
+                : t.importSpecifier(uid, t.identifier(exportName));
+
+            let newImport = t.importDeclaration(
+              [newImportSpecifier],
+              t.stringLiteral(moduleName)
+            );
+            path.unshiftContainer('body', newImport);
+          }
+
+          return addedImports[exportName];
         };
       },
 
@@ -216,9 +241,6 @@ module.exports = function (babel) {
 
             removals.push(specifierPath);
 
-            // ensure that the Ember global is imported if needed
-            state.ensureEmberImport();
-
             if (
               path.scope.bindings[local.name].referencePaths.find(
                 (rp) => rp.parent.type === 'ExportSpecifier'
@@ -268,7 +290,7 @@ module.exports = function (babel) {
                 if (!isTypescriptNode(referencePath.parentPath)) {
                   const memberExpression = getMemberExpressionFor(
                     global,
-                    state.emberIdentifier
+                    state.ensureImport('default', 'ember')
                   );
 
                   try {
