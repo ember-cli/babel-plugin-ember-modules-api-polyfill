@@ -253,7 +253,7 @@ describe('options', () => {
     it(`adds the ember import when used in sub-modules`, () => {
       let input = `import Component from '@ember/component';export default class extends Component {}`;
       let actual = transform(input, [[Plugin, { useEmberModule: true }]]);
-      let expected = `import _Ember from 'ember';\nexport default class extends _Ember.Component {}`;
+      let expected = `import _ember from 'ember';\nexport default class extends _ember.Component {}`;
 
       expect(actual).toEqual(expected);
     });
