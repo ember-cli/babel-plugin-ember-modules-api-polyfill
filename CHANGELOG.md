@@ -1,3 +1,13 @@
+## v3.4.0 (2021-02-24)
+
+#### :rocket: Enhancement
+* [#177](https://github.com/ember-cli/babel-plugin-ember-modules-api-polyfill/pull/177) Exposes a manual API for JS processing ([@pzuraq](https://github.com/pzuraq))
+* [#176](https://github.com/ember-cli/babel-plugin-ember-modules-api-polyfill/pull/176) Make ensureImport lazy ([@pzuraq](https://github.com/pzuraq))
+
+#### Committers: 1
+- Chris Garrett ([@pzuraq](https://github.com/pzuraq))
+
+
 ## v3.3.0 (2021-02-16)
 
 #### :rocket: Enhancement
