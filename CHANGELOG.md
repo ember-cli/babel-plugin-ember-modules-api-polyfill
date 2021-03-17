@@ -1,3 +1,12 @@
+## v3.5.0 (2021-03-17)
+
+#### :rocket: Enhancement
+* [#186](https://github.com/ember-cli/babel-plugin-ember-modules-api-polyfill/pull/186) Update ember-rfc176-data to latest. ([@rwjblue](https://github.com/rwjblue))
+
+#### Committers: 1
+- Robert Jackson ([@rwjblue](https://github.com/rwjblue))
+
+
 ## v3.4.0 (2021-02-24)
 
 #### :rocket: Enhancement
