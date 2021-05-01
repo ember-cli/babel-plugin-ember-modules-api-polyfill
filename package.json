@@ -34,7 +34,7 @@
     "@babel/core": "^7.14.0",
     "@babel/plugin-proposal-decorators": "^7.13.5",
     "@babel/plugin-transform-typescript": "^7.13.0",
-    "@babel/preset-env": "^7.13.8",
+    "@babel/preset-env": "^7.14.0",
     "babel-core": "^6.25.0",
     "eslint": "^7.25.0",
     "eslint-config-prettier": "^7.2.0",
