@@ -36,7 +36,7 @@
     "@babel/plugin-transform-typescript": "^7.14.6",
     "@babel/preset-env": "^7.14.4",
     "babel-core": "^6.25.0",
-    "eslint": "^7.27.0",
+    "eslint": "^7.29.0",
     "eslint-config-prettier": "^7.2.0",
     "babel-plugin-istanbul": "^6.0.0",
     "eslint-plugin-node": "^11.1.0",
