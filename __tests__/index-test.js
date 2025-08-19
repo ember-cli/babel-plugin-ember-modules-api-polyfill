@@ -347,43 +347,36 @@ export { computedPromise, position };
 
     let actual = transformWithPresetEnv(source);
 
-    expect(actual).toEqual(
-      `var ObjectPromiseProxy = Ember.ObjectProxy.extend(Ember.PromiseProxyMixin);
-var position = Ember.computed('lat', 'lng', function () {
-  var _Ember$getProperties = Ember.getProperties(this, 'lat', 'lng'),
-      lat = _Ember$getProperties.lat,
-      lng = _Ember$getProperties.lng;
-
-  return lat && lng ? new google.maps.LatLng(lat, lng) : undefined;
-});
-
-function position2() {
-  return Ember.computed('lat', 'lng', function () {
-    var _Ember$getProperties2 = Ember.getProperties(this, 'lat', 'lng'),
-        lat = _Ember$getProperties2.lat,
-        lng = _Ember$getProperties2.lng;
-
-    return lat && lng ? new google.maps.LatLng(lat, lng) : undefined;
-  });
-}
-
-function computedPromise() {
-  var _Ember;
-
-  for (var _len = arguments.length, args = new Array(_len), _key = 0; _key < _len; _key++) {
-    args[_key] = arguments[_key];
-  }
-
-  var func = args.pop();
-  return (_Ember = Ember).computed.apply(_Ember, args.concat([function () {
-    return ObjectPromiseProxy.create({
-      promise: func.apply(this)
-    });
-  }]));
-}
-
-export { computedPromise, position };`
-    );
+    expect(actual).toMatchInlineSnapshot(`
+      "var ObjectPromiseProxy = Ember.ObjectProxy.extend(Ember.PromiseProxyMixin);
+      var position = Ember.computed('lat', 'lng', function () {
+        var _Ember$getProperties = Ember.getProperties(this, 'lat', 'lng'),
+          lat = _Ember$getProperties.lat,
+          lng = _Ember$getProperties.lng;
+        return lat && lng ? new google.maps.LatLng(lat, lng) : undefined;
+      });
+      function position2() {
+        return Ember.computed('lat', 'lng', function () {
+          var _Ember$getProperties2 = Ember.getProperties(this, 'lat', 'lng'),
+            lat = _Ember$getProperties2.lat,
+            lng = _Ember$getProperties2.lng;
+          return lat && lng ? new google.maps.LatLng(lat, lng) : undefined;
+        });
+      }
+      function computedPromise() {
+        var _Ember;
+        for (var _len = arguments.length, args = new Array(_len), _key = 0; _key < _len; _key++) {
+          args[_key] = arguments[_key];
+        }
+        var func = args.pop();
+        return (_Ember = Ember).computed.apply(_Ember, args.concat([function () {
+          return ObjectPromiseProxy.create({
+            promise: func.apply(this)
+          });
+        }]));
+      }
+      export { computedPromise, position };"
+    `);
   });
 });
 
@@ -405,9 +398,10 @@ describe('when used with typescript', () => {
       Plugin,
     ]);
 
-    expect(actual).toEqual(
-      `Ember.RSVP.Promise.resolve().then(() => {});\n\nfunction scheduleSave(identifier, options = {}) {}`
-    );
+    expect(actual).toMatchInlineSnapshot(`
+      "Ember.RSVP.Promise.resolve().then(() => {});
+      function scheduleSave(identifier, options = {}) {}"
+    `);
   });
 
   it(`works when you use an import as both a type and a TSDeclareFunction`, () => {
@@ -490,17 +484,16 @@ export default class MyController extends Controller {
       ['@babel/plugin-proposal-decorators', { legacy: true }],
     ]);
 
-    expect(actual).toEqual(`var _dec, _class;
-
-function _applyDecoratedDescriptor(target, property, decorators, descriptor, context) { var desc = {}; Object.keys(descriptor).forEach(function (key) { desc[key] = descriptor[key]; }); desc.enumerable = !!desc.enumerable; desc.configurable = !!desc.configurable; if ('value' in desc || desc.initializer) { desc.writable = true; } desc = decorators.slice().reverse().reduce(function (desc, decorator) { return decorator(target, property, desc) || desc; }, desc); if (context && desc.initializer !== void 0) { desc.value = desc.initializer ? desc.initializer.call(context) : void 0; desc.initializer = undefined; } if (desc.initializer === void 0) { Object.defineProperty(target, property, desc); desc = null; } return desc; }
-
-let MyController = (_dec = Ember._action, (_class = class MyController extends Ember.Controller {
-  addAction(action) {
-    this.actions.pushObject(action);
-  }
-
-}, (_applyDecoratedDescriptor(_class.prototype, "addAction", [_dec], Object.getOwnPropertyDescriptor(_class.prototype, "addAction"), _class.prototype)), _class));
-export { MyController as default };`);
+    expect(actual).toMatchInlineSnapshot(`
+      "var _dec, _class;
+      function _applyDecoratedDescriptor(i, e, r, n, l) { var a = {}; return Object.keys(n).forEach(function (i) { a[i] = n[i]; }), a.enumerable = !!a.enumerable, a.configurable = !!a.configurable, (\\"value\\" in a || a.initializer) && (a.writable = !0), a = r.slice().reverse().reduce(function (r, n) { return n(i, e, r) || r; }, a), l && void 0 !== a.initializer && (a.value = a.initializer ? a.initializer.call(l) : void 0, a.initializer = void 0), void 0 === a.initializer ? (Object.defineProperty(i, e, a), null) : a; }
+      let MyController = (_dec = Ember._action, _class = class MyController extends Ember.Controller {
+        addAction(action) {
+          this.actions.pushObject(action);
+        }
+      }, _applyDecoratedDescriptor(_class.prototype, \\"addAction\\", [_dec], Object.getOwnPropertyDescriptor(_class.prototype, \\"addAction\\"), _class.prototype), _class);
+      export { MyController as default };"
+    `);
   });
 });
 
