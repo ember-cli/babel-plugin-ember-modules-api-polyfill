@@ -3,14 +3,13 @@ name: CI
 on:
   push:
     branches:
+      - main
       - master
-      - 'v*' # older version branches
-    tags:
-      - '*'
-
   pull_request: {}
-  schedule:
-  - cron:  '0 6 * * 0' # weekly, on sundays
+
+concurrency:
+  group: ci-${{ github.head_ref || github.ref }}
+  cancel-in-progress: true
 
 jobs:
   lint:
