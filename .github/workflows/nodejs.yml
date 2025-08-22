@@ -3,14 +3,13 @@ name: CI
 on:
   push:
     branches:
+      - main
       - master
-      - 'v*' # older version branches
-    tags:
-      - '*'
-
   pull_request: {}
-  schedule:
-  - cron:  '0 6 * * 0' # weekly, on sundays
+
+concurrency:
+  group: ci-${{ github.head_ref || github.ref }}
+  cancel-in-progress: true
 
 jobs:
   lint:
@@ -18,43 +17,68 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-    - uses: actions/checkout@v1
-    - uses: actions/setup-node@v1
+    - uses: actions/checkout@v4
+    - uses: pnpm/action-setup@v4
+    - uses: actions/setup-node@v4
       with:
-        node-version: '12.x'
+        node-version: 22
+    - name: install dependencies
+      run: pnpm install
+    - name: lint
+      run: pnpm lint
+
+  legacy-node-test:
+    name: Tests
+    runs-on: ubuntu-latest
+
+    strategy:
+      fail-fast: false
+      matrix:
+        node: ['6', '8', '10', '12', '14', '16', '18']
+
+    steps:
+    - uses: actions/checkout@v4
+    - uses: actions/setup-node@v4
+      with:
+        node-version: ${{ matrix.node }}
+    - run: cat <<< $(jq '.packageManager = "yarn@1.22.22"' package.json) > package.json
     - name: install dependencies
       run: yarn install --frozen-lockfile --ignore-engines
-    - name: lint
-      run: yarn lint
+    - name: test
+      run: yarn test
 
   test:
     name: Tests
     runs-on: ubuntu-latest
 
     strategy:
+      fail-fast: false
       matrix:
-        node: ['6', '8', '10', '12', '14']
+        node: ['20', '22', '24']
 
     steps:
-    - uses: actions/checkout@v1
-    - uses: actions/setup-node@v1
+    - uses: actions/checkout@v4
+    - uses: pnpm/action-setup@v4
+    - uses: actions/setup-node@v4
       with:
         node-version: ${{ matrix.node }}
+        cache: pnpm
     - name: install dependencies
-      run: yarn install --frozen-lockfile --ignore-engines
+      run: pnpm install
     - name: test
-      run: yarn test
+      run: pnpm run test
 
   floating-test:
     name: Floating dependencies
     runs-on: ubuntu-latest
 
     steps:
-    - uses: actions/checkout@v1
-    - uses: actions/setup-node@v1
+    - uses: actions/checkout@v4
+    - uses: pnpm/action-setup@v4
+    - uses: actions/setup-node@v4
       with:
-        node-version: '12.x'
+        node-version: 22
     - name: install dependencies
-      run: yarn install --no-lockfile --ignore-engines
+      run: pnpm install --no-lockfile
     - name: test
-      run: yarn test
+      run: pnpm test
